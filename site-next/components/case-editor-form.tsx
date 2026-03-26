@@ -50,6 +50,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
   const [showDiff, setShowDiff] = useState(false);
   const [preImproveReport, setPreImproveReport] = useState<ValidationReport | null>(null);
   const [isRevalidating, setIsRevalidating] = useState(false);
+  const [customInstruction, setCustomInstruction] = useState('');
   const [formData, setFormData] = useState({
     title: study.title,
     launchDate: study.launchDate,
@@ -175,6 +176,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           content: formData.content,
           title: formData.title,
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
+          customInstruction: customInstruction.trim() || undefined,
           baronFeedback: validationReport ? {
             verdict: validationReport.verdict,
             fixes: validationReport.fixes,
@@ -659,6 +661,22 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
                 )}
               </Button>
             </div>
+          </div>
+
+          {/* AI 커스텀 지시 입력 */}
+          <div className="flex gap-2">
+            <Input
+              value={customInstruction}
+              onChange={(e) => setCustomInstruction(e.target.value)}
+              placeholder="AI에게 추가 지시 (예: 톤을 더 캐주얼하게, 한국 시장 부분 보강 등)"
+              className="text-sm"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && customInstruction.trim() && formData.content) {
+                  e.preventDefault();
+                  handleImproveContent();
+                }
+              }}
+            />
           </div>
 
           {/* Diff 비교 패널 */}

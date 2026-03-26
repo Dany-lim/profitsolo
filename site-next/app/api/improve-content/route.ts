@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { content, title, context, baronFeedback } = await request.json();
+    const { content, title, context, customInstruction, baronFeedback } = await request.json();
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
@@ -86,10 +86,12 @@ ${baronFeedback.redFlags.map((f: string) => `- ${f}`).join('\n')}` : ''}
 ${baronFeedback.bannedWords?.length ? `[금지어 발견 — 반드시 대체하거나 제거]
 ${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
 ` : ''}
-[현재 콘텐츠]
+${customInstruction ? `[편집자 추가 지시 — 반드시 반영할 것]
+${customInstruction}
+` : ''}[현재 콘텐츠]
 ${content}
 
-위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${baronFeedback ? ' 특히 바론의 피드백(Red Flags, 금지어, 수정 지시)을 최우선으로 반영하라.' : ''} 개선된 마크다운 본문만 출력.`;
+위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${customInstruction ? ` 특히 편집자의 추가 지시를 최우선으로 반영하라.` : ''}${baronFeedback ? ' 바론의 피드백(Red Flags, 금지어, 수정 지시)도 반영하라.' : ''} 개선된 마크다운 본문만 출력.`;
 
     const result = await generateWithRetry(prompt);
     let improvedContent = result.response.text();
