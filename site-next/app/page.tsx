@@ -3,7 +3,7 @@ import { HomeContent } from '@/components/home-content';
 import { getPublishedCaseStudies } from '@/lib/data';
 
 // 데이터베이스 업데이트 시 즉각 반영을 위해 ISR 대신 적절한 재검증 주기 설정 (또는 실시간을 원하면 0)
-export const revalidate = 60; // 1분마다 재검증
+export const dynamic = 'force-dynamic';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://profitsolo.net';
 
