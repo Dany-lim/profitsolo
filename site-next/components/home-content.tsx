@@ -12,6 +12,7 @@ interface HomeContentProps {
 export function HomeContent({ initialStudies }: HomeContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState('All');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Extract unique tags from all case studies
   const allTags = useMemo(() => {
@@ -44,9 +45,9 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
       {/* Magazine-style Sticky Navigation */}
       <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 items-center py-4">
-            {/* Left Navigation */}
-            <div className="flex gap-6">
+          <div className="flex items-center justify-between py-4 md:grid md:grid-cols-3">
+            {/* Left Navigation (desktop only) */}
+            <div className="hidden gap-6 md:flex">
               <Link
                 href="#about"
                 className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
@@ -62,16 +63,16 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
             </div>
 
             {/* Center Logo */}
-            <div className="text-center">
+            <div className="text-center md:col-start-2">
               <Link href="/">
-                <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-2xl font-bold text-transparent">
+                <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
                   Startup Radar
                 </span>
               </Link>
             </div>
 
-            {/* Right Navigation */}
-            <div className="flex justify-end gap-6">
+            {/* Right Navigation (desktop only) */}
+            <div className="hidden justify-end gap-6 md:flex">
               <Link
                 href="#join"
                 className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
@@ -79,22 +80,68 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                 레이더망 합류하기
               </Link>
             </div>
+
+            {/* Mobile hamburger button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition-colors hover:bg-slate-100 md:hidden"
+              aria-label="메뉴 열기"
+            >
+              {mobileMenuOpen ? (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+              )}
+            </button>
           </div>
+
+          {/* Mobile menu dropdown */}
+          {mobileMenuOpen && (
+            <div className="border-t border-slate-100 pb-4 md:hidden">
+              <div className="flex flex-col gap-1 pt-2">
+                <Link
+                  href="#about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                >
+                  사이트 소개
+                </Link>
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                >
+                  케이스 스터디
+                </Link>
+                <Link
+                  href="#join"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                >
+                  레이더망 합류하기
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
           <div className="animate-hero text-center">
-            <h1 className="mb-6 text-5xl font-bold leading-tight text-slate-900 sm:text-6xl lg:text-7xl">
+            <h1 className="mb-6 text-3xl font-bold leading-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-7xl">
               조용히 세상을 지배하는
               <br />
               <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
                 1인 기업 해부학
               </span>
             </h1>
-            <p className="mx-auto mb-12 max-w-2xl text-lg text-slate-600 sm:text-xl">
+            <p className="mx-auto mb-8 max-w-2xl text-base text-slate-600 sm:mb-12 sm:text-xl">
               광고비 0원, 100% 자동화, 압도적 이익률.
               <br />
               월 1,000만 원 이상을 벌어들이는 전 세계 숨겨진 알짜 비즈니스를 치밀하게 분석합니다.
@@ -121,18 +168,18 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                   placeholder="케이스 스터디 검색..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-full border border-slate-200 bg-white py-4 pl-12 pr-6 text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-full border border-slate-200 bg-white py-3 pl-12 pr-6 text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:py-4"
                 />
               </div>
             </div>
 
             {/* Tag Filters */}
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               {allTags.map((tag) => (
                 <button
                   key={tag}
                   onClick={() => setActiveTag(tag)}
-                  className={`rounded-full border px-6 py-2 text-sm font-medium transition-all ${
+                  className={`rounded-full border px-4 py-2 text-xs font-medium transition-all sm:px-6 sm:text-sm ${
                     activeTag === tag
                       ? 'border-orange-500 bg-orange-500 text-white shadow-md'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
@@ -171,21 +218,21 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
 
       {/* About Section */}
       <section id="about" className="border-t border-slate-100 bg-slate-50">
-        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="animate-fade-in-up space-y-12">
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
+          <div className="animate-fade-in-up space-y-8 sm:space-y-12">
             {/* Main Title */}
             <div className="text-center">
-              <h2 className="mb-4 text-4xl font-bold text-slate-900 sm:text-5xl">
+              <h2 className="mb-4 text-2xl font-bold text-slate-900 sm:text-4xl md:text-5xl">
                 위대한 아이디어는 하늘에서 떨어지지 않습니다
               </h2>
-              <p className="text-xl font-semibold text-blue-600">
+              <p className="text-base font-semibold text-blue-600 sm:text-xl">
                 우리가 조용히 세상을 지배하는 '1인 기업'의 해부도를 추적하는 이유
               </p>
             </div>
 
             {/* Content Box 1 */}
-            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-8 sm:p-12">
-              <div className="space-y-6 text-lg leading-relaxed text-slate-700">
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 sm:p-8 md:p-12">
+              <div className="space-y-4 text-base leading-relaxed text-slate-700 sm:space-y-6 sm:text-lg">
                 <p>
                   우리는 오랫동안 거대한 착각 속에 살아왔습니다. '창업'이라고 하면 으레 번듯한 사무실을 빌리고, 수십억 원의 투자금을 유치하며, 수십 명의 직원을 먹여 살리는 뼈깎는 고통의 길이라고 배워왔기 때문입니다.
                 </p>

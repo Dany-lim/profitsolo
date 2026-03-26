@@ -82,7 +82,11 @@ export function NewCaseForm() {
           setCompanyUrl(data.entities.websiteUrl);
         }
         setEnrichDone(true);
-        const websiteNote = data.websiteScraped ? '(웹사이트 스크래핑 포함)' : '(웹사이트 접근 불가)';
+        const websiteNote = data.websiteScraped
+          ? '(웹사이트 스크래핑 포함)'
+          : data.scrapeError
+          ? `(웹사이트 접근 실패: ${data.scrapeError}${data.attemptedUrl ? ` — ${data.attemptedUrl}` : ''})`
+          : '(웹사이트 URL 없음)';
         setStatus(`추가 정보 조사 완료 ${websiteNote}`);
       } else {
         setStatus('');

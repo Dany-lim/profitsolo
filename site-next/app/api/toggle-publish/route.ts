@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 
 export async function POST(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current published status
-    const { data: study, error: fetchError } = await supabase
+    const { data: study, error: fetchError } = await supabaseAdmin
       .from('case_studies')
       .select('published')
       .eq('id', id)
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('case_studies')
       .update({ published: !study.published })
       .eq('id', id);

@@ -28,17 +28,17 @@ export function CaseStudyCard({ study, index }: CaseStudyCardProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
 
             {/* MRR Badge */}
-            <div className="absolute bottom-4 left-4">
-              <span className="rounded-full bg-orange-500 px-4 py-1.5 text-sm font-bold text-white shadow-lg">
+            <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4">
+              <span className="rounded-full bg-orange-500 px-3 py-1 text-xs font-bold text-white shadow-lg sm:px-4 sm:py-1.5 sm:text-sm">
                 {study.mrr}
               </span>
             </div>
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Tags */}
-            <div className="mb-3 flex flex-wrap gap-2">
+            <div className="mb-2 flex flex-wrap gap-1.5 sm:mb-3 sm:gap-2">
               {study.tags.map((tag) => (
                 <span
                   key={tag}
@@ -50,7 +50,7 @@ export function CaseStudyCard({ study, index }: CaseStudyCardProps) {
             </div>
 
             {/* Title */}
-            <h3 className="mb-2 line-clamp-2 text-xl font-semibold text-slate-900 transition-colors group-hover:text-blue-600">
+            <h3 className="mb-2 line-clamp-2 text-base font-semibold text-slate-900 transition-colors group-hover:text-blue-600 sm:text-xl">
               {study.title}
             </h3>
 

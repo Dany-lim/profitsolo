@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 // Gemini API 클라이언트 초기화 (싱글톤)
 let genAI: GoogleGenerativeAI | null = null;
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     }
 
     // 2. 데이터베이스 읽기 (Supabase)
-    const { data: study, error: fetchError } = await supabase
+    const { data: study, error: fetchError } = await supabaseAdmin
       .from('case_studies')
       .select('*')
       .eq('id', id)
@@ -178,7 +178,7 @@ export async function POST(request: Request) {
     }
 
     // Supabase 업데이트
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('case_studies')
       .update({
         content: newContent,

@@ -108,7 +108,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
       {/* Hero Section */}
       <div className="relative">
-        <div className="relative h-[400px] w-full overflow-hidden">
+        <div className="relative h-[280px] w-full overflow-hidden sm:h-[400px]">
           <Image
             src={study.thumbnailImage || '/og-default.png'}
             alt={study.title}
@@ -118,23 +118,23 @@ export default async function CaseDetailPage({ params }: PageProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent" />
 
-          <div className="absolute bottom-0 left-0 right-0 px-4 pb-12 sm:px-6 lg:px-8">
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-6 sm:pb-12 lg:px-8">
             <div className="mx-auto max-w-5xl">
-              <div className="mb-4 flex flex-wrap gap-2">
+              <div className="mb-2 flex flex-wrap gap-1.5 sm:mb-4 sm:gap-2">
                 {study.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-md border border-slate-200 bg-white/90 px-4 py-1.5 text-sm font-medium text-slate-700 backdrop-blur-sm"
+                    className="rounded-md border border-slate-200 bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm sm:px-4 sm:py-1.5 sm:text-sm"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
-              <h1 className="mb-4 text-4xl font-bold text-slate-900 sm:text-5xl">
+              <h1 className="mb-2 text-2xl font-bold text-slate-900 sm:mb-4 sm:text-4xl md:text-5xl">
                 {study.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-slate-700">
-                <span className="text-2xl font-bold text-orange-600">{study.mrr}</span>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-700 sm:gap-4 sm:text-base">
+                <span className="text-lg font-bold text-orange-600 sm:text-2xl">{study.mrr}</span>
                 <span className="text-slate-300">|</span>
                 <span>{study.byline}</span>
                 <span className="text-slate-300">|</span>
@@ -167,7 +167,7 @@ export default async function CaseDetailPage({ params }: PageProps) {
       </div>
 
       {/* Content */}
-      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-16 lg:px-8">
         <CaseDetailContent study={study} />
       </div>
     </div>

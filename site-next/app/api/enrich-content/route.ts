@@ -98,45 +98,58 @@ ${rawContent.substring(0, 15000)}`;
       entities.websiteUrl = targetUrl;
     }
     let websiteInfo = '';
+    let scrapeError = '';
     if (targetUrl) {
-      try {
-        const siteRes = await fetch(targetUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-            'Accept': 'text/html,application/xhtml+xml',
-          },
-          signal: AbortSignal.timeout(10000),
-        });
-
-        if (siteRes.ok) {
-          const html = await siteRes.text();
-          const $ = cheerio.load(html);
-          $('script, style, nav, footer, iframe').remove();
-
-          const metaDesc = $('meta[name="description"]').attr('content') || '';
-          const metaTitle = $('title').text().trim();
-          const ogDesc = $('meta[property="og:description"]').attr('content') || '';
-          const h1 = $('h1').first().text().trim();
-
-          // Extract visible text from main sections
-          let mainText = '';
-          $('main, [role="main"], .hero, .about, #about, .features').each((_, el) => {
-            mainText += $(el).text().trim() + '\n';
+      const isValidUrl = targetUrl.startsWith('http://') || targetUrl.startsWith('https://');
+      if (!isValidUrl) {
+        scrapeError = `잘못된 URL 형식: ${targetUrl}`;
+        console.warn(`[enrich-content] Invalid URL format: ${targetUrl}`);
+      } else {
+        try {
+          console.log(`[enrich-content] Scraping: ${targetUrl}`);
+          const siteRes = await fetch(targetUrl, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'Accept': 'text/html,application/xhtml+xml',
+            },
+            signal: AbortSignal.timeout(10000),
+            redirect: 'follow',
           });
-          if (!mainText) {
-            mainText = $('body').text().trim().substring(0, 2000);
-          }
 
-          websiteInfo = [
-            metaTitle && `사이트 제목: ${metaTitle}`,
-            metaDesc && `메타 설명: ${metaDesc}`,
-            ogDesc && ogDesc !== metaDesc && `OG 설명: ${ogDesc}`,
-            h1 && `메인 헤딩: ${h1}`,
-            mainText && `본문 요약:\n${mainText.substring(0, 1500)}`,
-          ].filter(Boolean).join('\n');
+          if (siteRes.ok) {
+            const html = await siteRes.text();
+            const $ = cheerio.load(html);
+            $('script, style, nav, footer, iframe').remove();
+
+            const metaDesc = $('meta[name="description"]').attr('content') || '';
+            const metaTitle = $('title').text().trim();
+            const ogDesc = $('meta[property="og:description"]').attr('content') || '';
+            const h1 = $('h1').first().text().trim();
+
+            let mainText = '';
+            $('main, [role="main"], .hero, .about, #about, .features').each((_, el) => {
+              mainText += $(el).text().trim() + '\n';
+            });
+            if (!mainText) {
+              mainText = $('body').text().trim().substring(0, 2000);
+            }
+
+            websiteInfo = [
+              metaTitle && `사이트 제목: ${metaTitle}`,
+              metaDesc && `메타 설명: ${metaDesc}`,
+              ogDesc && ogDesc !== metaDesc && `OG 설명: ${ogDesc}`,
+              h1 && `메인 헤딩: ${h1}`,
+              mainText && `본문 요약:\n${mainText.substring(0, 1500)}`,
+            ].filter(Boolean).join('\n');
+            console.log(`[enrich-content] Scrape OK (${websiteInfo.length} chars)`);
+          } else {
+            scrapeError = `HTTP ${siteRes.status}`;
+            console.warn(`[enrich-content] HTTP ${siteRes.status}: ${targetUrl}`);
+          }
+        } catch (err: any) {
+          scrapeError = err?.cause?.code || err?.message || 'network error';
+          console.warn(`[enrich-content] Scrape failed: ${targetUrl} — ${scrapeError}`);
         }
-      } catch {
-        // Website scraping failed - continue without it
       }
     }
 
@@ -202,6 +215,8 @@ ${websiteInfo ? `[공식 웹사이트 스크래핑 결과]\n${websiteInfo}` : '[
       entities,
       enrichedSection,
       websiteScraped: !!websiteInfo,
+      scrapeError: scrapeError || undefined,
+      attemptedUrl: targetUrl || undefined,
     });
   } catch (error) {
     return NextResponse.json(

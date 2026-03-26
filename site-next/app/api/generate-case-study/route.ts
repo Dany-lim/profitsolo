@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 
 const APPROVED_TAGS = [
@@ -89,34 +89,32 @@ ${enrichedContent}` : companyUrlNote;
 아래 원본 인터뷰/기사를 바탕으로 창업 스토리를 작성하세요.
 
 [문체 & 톤]
-- 소설처럼 써라. 장면 묘사로 시작하라. "2016년 4월, 브라티슬라바의 어느 아파트." 이런 식으로.
+- 소설처럼 써라. 원문에 장소와 시기가 있으면 장면 묘사로 시작하라. 없으면 억지로 지어내지 마라.
 - 짧은 문장 위주. 한 문장이 40자를 넘지 않도록. 리듬감 있게.
-- 숫자는 그대로 살려라. "월 $500K", "직원 87명", "첫 수익 13센트" — 숫자가 스토리의 힘이다.
+- 원문의 숫자(매출, 직원 수, 수익 등)는 절대 바꾸지 말고 그대로 살려라.
 - 창업자의 실제 발언이나 인사이트는 인용문(> )으로 강조하라.
 - 독자에게 설교하지 마라. 사실과 장면만 보여주면 독자가 알아서 느낀다.
 - "~습니다"체 금지. "~다", "~였다", "~했다"의 문어체 또는 "~거야", "~했어"의 구어체를 섞어 써라.
 
 [구조]
 1. **오프닝 (장면으로 시작)**
-   - 숫자 하나로 독자를 낚아라. "월 7억. 카지노 사이트로." 이런 식.
-   - 또는 특정 순간/장면으로 시작. 시간, 장소, 상황.
-   - 3줄 안에 "이 사람이 뭘 만들었는지" 이해시켜라.
+   - 원문에서 가장 임팩트 있는 숫자나 순간으로 시작하라.
+   - 3줄 안에 이 사람이 뭘 만들었는지 이해시켜라.
 
 2. **창업자의 여정 (본문)**
    - 시간순으로 풀되, 지루한 부분은 과감히 건너뛰어라.
    - 핵심 전환점만 깊게 파라: 첫 아이디어, 가장 힘든 순간, 터닝포인트, 첫 수익.
    - 구체적 숫자와 에피소드를 최대한 활용하라.
-   - 중간중간 짧은 문장으로 긴장감을 만들어라. "그런데 문제가 있었다." "돈이 떨어지고 있었다."
+   - 짧은 문장으로 긴장감을 만들어라.
 
 3. **성장과 전략**
-   - 어떻게 성장했는지 구체적으로. 막연한 "노력" 말고 실제 전략과 수치.
+   - 어떻게 성장했는지 구체적으로. 막연한 표현 말고 실제 전략과 수치.
    - 사용한 도구, 채널, 의사결정의 이유를 밀도 있게.
 
 4. **마무리 (주인장의 시선)**
-   - "스타트업 레이더 주인장"이 술자리에서 친구에게 이 이야기를 해주는 톤으로.
-   - 번호 리스트 금지. 볼드 키워드 정리 금지. 그냥 자연스러운 문단으로.
-   - "이 케이스의 핵심은 결국 ~다" 식의 한줄 정리가 아니라, "나라면 여기서 뭘 훔칠까?"라는 관점으로 써라.
-   - 예시 톤: "솔직히 이 사람 대단한 건 기술이 아니라 속도였다. 검색해서 없으면 바로 만든다. 이게 전부다."
+   - 스타트업 레이더 주인장이 친구에게 이 이야기를 해주는 톤으로.
+   - 번호 리스트 금지. 볼드 키워드 정리 금지. 자연스러운 문단으로.
+   - 분석 보고서가 아니라, 이 케이스에서 뭘 가져갈 수 있는지 본인의 관점으로 써라.
 
 [분량]
 - 5,000~8,000자.
@@ -125,13 +123,11 @@ ${enrichedContent}` : companyUrlNote;
 - 마크다운 표 금지. 파이프 기호 금지.
 - 이모지 금지.
 - 사이트 명칭은 반드시 "스타트업 레이더"만 사용.
-- "가상 회고록", "재구성" 같은 메타 설명 금지. 그냥 이야기를 들려줘라.
-- "~의 여정을 시작했습니다", "혁신을 만들어가는" 같은 AI 냄새 나는 표현 금지.
-- "~를 보여준다", "~를 시사한다", "~에서 배울 수 있다" 같은 분석 보고서 톤 금지.
-- "첫째/둘째/셋째", "1. 2. 3." 번호 매기기 정리 금지 (주인장 시선 섹션).
-- "핵심 인사이트", "중요한 시사점", "의미 있는 교훈" 같은 메타 표현 금지.
-- "~의 성공 비결은", "~의 핵심 전략은" 같은 요약 패턴 금지.
-- 볼드(**) 완전 금지. 소제목은 ##, ###만 사용. 본문에서 **단어** 강조 절대 사용하지 마라.
+- 메타 설명 금지. 그냥 이야기를 들려줘라.
+- AI 냄새 나는 정형화된 표현 금지 (여정, 혁신, 시사점, 교훈, 비결 등).
+- 분석 보고서 톤 금지.
+- 번호 매기기 정리 금지 (주인장 시선 섹션).
+- 볼드(**) 완전 금지. 소제목은 ##, ###만 사용.
 - JSON, 코드 블록 금지. 순수 마크다운 본문만 출력.
 
 [원본 콘텐츠]
@@ -301,7 +297,7 @@ ${JSON.stringify(APPROVED_TAGS)}
 
     // Save to database
     // Ensure unique ID
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('case_studies')
       .select('id')
       .ilike('id', `${caseStudy.id}%`);
@@ -332,11 +328,14 @@ ${JSON.stringify(APPROVED_TAGS)}
       content: caseStudy.content,
     };
 
-    const { error: dbError } = await supabase
+    const { error: dbError } = await supabaseAdmin
       .from('case_studies')
       .insert(supabaseData);
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      console.error('[generate-case-study] DB Error:', dbError.message, dbError.details, dbError.hint, dbError.code);
+      throw new Error(`DB 저장 실패: ${dbError.message} (code: ${dbError.code})`);
+    }
 
 
     return NextResponse.json({
@@ -348,10 +347,11 @@ ${JSON.stringify(APPROVED_TAGS)}
         id: caseStudy.id,
       }
     });
-  } catch (error) {
-    console.error('[generate-case-study] Error:', error);
+  } catch (error: any) {
+    const errMsg = error?.message || error?.details || error?.hint || JSON.stringify(error);
+    console.error('[generate-case-study] Error:', errMsg, error);
     return NextResponse.json(
-      { error: '케이스 스터디 생성 실패', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: '케이스 스터디 생성 실패', details: errMsg },
       { status: 500 }
     );
   }

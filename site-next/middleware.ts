@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Protect admin API routes
-  if (pathname.startsWith('/api/admin') || pathname === '/api/save-post' || pathname === '/api/delete-post' || pathname === '/api/toggle-publish') {
+  if (pathname.startsWith('/api/admin') || pathname === '/api/save-post' || pathname === '/api/delete-post' || pathname === '/api/toggle-publish' || pathname === '/api/validate-content') {
     if (!session || session.value !== 'authenticated') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,5 +28,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/save-post', '/api/delete-post', '/api/toggle-publish'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/save-post', '/api/delete-post', '/api/toggle-publish', '/api/validate-content'],
 };

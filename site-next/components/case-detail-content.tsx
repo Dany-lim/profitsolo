@@ -10,20 +10,20 @@ interface CaseDetailContentProps {
 
 export function CaseDetailContent({ study }: CaseDetailContentProps) {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {/* Metrics */}
       {study.metrics && study.metrics.length > 0 && (
-        <section className="animate-fade-in-up grid gap-6 sm:grid-cols-3">
+        <section className="animate-fade-in-up grid gap-4 sm:gap-6 sm:grid-cols-3">
           {study.metrics.map((metric, index) => (
           <div
             key={metric.label}
-            className="animate-fade-in-up rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="animate-fade-in-up rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <div className="mb-2 text-sm font-medium text-slate-500">
+            <div className="mb-1 text-xs font-medium text-slate-500 sm:mb-2 sm:text-sm">
               {metric.label}
             </div>
-            <div className="mb-3 text-3xl font-bold text-orange-600">
+            <div className="mb-2 text-2xl font-bold text-orange-600 sm:mb-3 sm:text-3xl">
               {metric.value}
             </div>
             <div className="text-sm text-slate-600">
@@ -37,10 +37,10 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
       {/* Executive Summary */}
       {study.executiveSummary && study.executiveSummary.length > 0 && (
         <section
-        className="animate-fade-in-up rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-orange-50 p-8"
+        className="animate-fade-in-up rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-orange-50 p-5 sm:p-8"
         style={{ animationDelay: '0.3s' }}
       >
-        <h2 className="mb-6 text-2xl font-bold text-slate-900">
+        <h2 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
           핵심 요약
         </h2>
         <ul className="space-y-4">
@@ -70,7 +70,7 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
         >
           <div className="grid items-center md:grid-cols-2">
             {/* Left: Product Image */}
-            <div className="relative flex items-center justify-center bg-slate-800/50 p-8 md:p-12">
+            <div className="relative flex items-center justify-center bg-slate-800/50 p-4 sm:p-8 md:p-12">
               <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl">
                 <Image
                   src={study.productPreview.localImage}
@@ -82,8 +82,8 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
               </div>
             </div>
             {/* Right: Features */}
-            <div className="p-8 md:p-12">
-              <h2 className="mb-8 text-2xl font-bold text-white">
+            <div className="p-5 sm:p-8 md:p-12">
+              <h2 className="mb-4 text-xl font-bold text-white sm:mb-8 sm:text-2xl">
                 {study.productPreview.title}
               </h2>
               <div className="space-y-6">
@@ -115,10 +115,10 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
       {/* Korean Market Strategy */}
       {study.kMarketStrategy && (
         <section
-        className="animate-fade-in-up rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+        className="animate-fade-in-up rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
         style={{ animationDelay: '0.5s' }}
       >
-        <h2 className="mb-6 text-2xl font-bold text-blue-600">
+        <h2 className="mb-4 text-xl font-bold text-blue-600 sm:mb-6 sm:text-2xl">
           한국 시장 전략
         </h2>
         <div className="space-y-6">
@@ -144,18 +144,32 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
 
       {/* Main Content */}
       <article
-        className="animate-fade-in-up prose prose-lg prose-slate max-w-none
+        className="animate-fade-in-up prose prose-base prose-slate max-w-none sm:prose-lg
           prose-headings:font-bold
-          prose-h2:text-3xl prose-h2:text-blue-600
-          prose-h3:text-2xl prose-h3:text-blue-500
+          prose-h2:text-xl prose-h2:text-blue-600 sm:prose-h2:text-3xl
+          prose-h3:text-lg prose-h3:text-blue-500 sm:prose-h3:text-2xl
           prose-p:text-slate-700 prose-p:leading-relaxed
           prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
           prose-strong:font-semibold prose-strong:text-orange-600
           prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-50 prose-blockquote:py-2 prose-blockquote:not-italic
-          rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+          rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8"
         style={{ animationDelay: '0.6s' }}
       >
-        <ReactMarkdown>{study.content}</ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            a: ({ href, children, ...props }) => {
+              const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'));
+              if (isExternal) {
+                return (
+                  <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                    {children}
+                  </a>
+                );
+              }
+              return <a href={href} {...props}>{children}</a>;
+            },
+          }}
+        >{study.content}</ReactMarkdown>
       </article>
     </div>
   );
