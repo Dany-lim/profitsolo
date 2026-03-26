@@ -91,7 +91,13 @@ ${customInstruction}
 ` : ''}[현재 콘텐츠]
 ${content}
 
-위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${customInstruction ? ` 특히 편집자의 추가 지시를 최우선으로 반영하라.` : ''}${baronFeedback ? ' 바론의 피드백(Red Flags, 금지어, 수정 지시)도 반영하라.' : ''} 개선된 마크다운 본문만 출력.`;
+위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${customInstruction ? ` 특히 편집자의 추가 지시를 최우선으로 반영하라.` : ''}${baronFeedback ? `
+
+[중요: 최소 수정 원칙]
+바론이 지적한 부분(Red Flags, 금지어, 수정 지시)만 정확히 수정하라.
+바론이 문제 삼지 않은 문장, 단락, 구조는 절대 건드리지 마라.
+원문의 표현, 순서, 흐름을 최대한 유지하면서 지적 사항만 고쳐라.
+전체를 다시 쓰지 마라. 바론의 피드백에 해당하는 부분만 최소한으로 수정하라.` : ''} 개선된 마크다운 본문만 출력.`;
 
     const result = await generateWithRetry(prompt);
     let improvedContent = result.response.text();
