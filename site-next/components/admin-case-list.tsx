@@ -179,7 +179,7 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
                 편집
               </a>
               <a
-                href={`/case/${study.id}`}
+                href={`/case/${study.id}?preview=true`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"

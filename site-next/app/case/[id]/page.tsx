@@ -11,6 +11,7 @@ export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 async function getStudy(id: string): Promise<CaseStudy | null> {
@@ -57,11 +58,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function CaseDetailPage({ params }: PageProps) {
+export default async function CaseDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { preview } = await searchParams;
   const study = await getStudy(id);
+  const isPreview = preview === 'true';
 
-  if (!study || study.published === false) {
+  if (!study || (!isPreview && study.published === false)) {
     notFound();
   }
 
@@ -97,6 +100,13 @@ export default async function CaseDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Preview Banner */}
+      {isPreview && (
+        <div className="sticky top-0 z-50 bg-orange-500 px-4 py-2 text-center text-sm font-medium text-white">
+          미리보기 모드 — 이 글은 아직 발행되지 않았습니다
+        </div>
+      )}
+
       {/* JSON-LD */}
       <script
         type="application/ld+json"
