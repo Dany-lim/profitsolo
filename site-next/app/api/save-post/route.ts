@@ -1,61 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
     const updatedPost = await request.json();
-
-    // Read current case studies
-    const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const caseStudies = JSON.parse(fileContent);
-
-    // Check if this is a new post (ID starts with "new-")
-    const isNewPost = updatedPost.id.startsWith('new-');
+    let currentId = updatedPost.id;
+    const isNewPost = currentId.startsWith('new-');
 
     if (isNewPost) {
       // Generate a proper ID from the title
-      const newId = updatedPost.title
+      const baseSlug = updatedPost.title
         .toLowerCase()
         .replace(/[^a-z0-9가-힣]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .substring(0, 50);
 
-      // Make sure the ID is unique
-      let finalId = newId;
-      let counter = 1;
-      while (caseStudies.some((s: any) => s.id === finalId)) {
-        finalId = `${newId}-${counter}`;
-        counter++;
+      // Check for uniqueness
+      const { data: existing } = await supabase
+        .from('case_studies')
+        .select('id')
+        .ilike('id', `${baseSlug}%`);
+      
+      let finalId = baseSlug;
+      if (existing && existing.length > 0) {
+        finalId = `${baseSlug}-${existing.length + 1}`;
       }
-
-      updatedPost.id = finalId;
-      if (updatedPost.published === undefined) {
-        updatedPost.published = false;
-      }
-
-      // Add the new post to the beginning of the array
-      caseStudies.unshift(updatedPost);
-    } else {
-      // Find and update existing post
-      const index = caseStudies.findIndex((study: any) => study.id === updatedPost.id);
-
-      if (index === -1) {
-        return NextResponse.json(
-          { error: 'Case study not found' },
-          { status: 404 }
-        );
-      }
-
-      // Update the study
-      caseStudies[index] = { ...caseStudies[index], ...updatedPost };
+      currentId = finalId;
     }
 
-    // Write back to file
-    await fs.writeFile(filePath, JSON.stringify(caseStudies, null, 2), 'utf-8');
+    const supabaseData = {
+      id: currentId,
+      title: updatedPost.title,
+      korean_title: updatedPost.koreanTitle,
+      byline: updatedPost.byline,
+      url: updatedPost.url,
+      mrr: updatedPost.mrr,
+      launch_date: updatedPost.launchDate,
+      thumbnail_image: updatedPost.thumbnailImage,
+      tags: updatedPost.tags,
+      metrics: updatedPost.metrics,
+      executive_summary: updatedPost.executiveSummary,
+      product_preview: updatedPost.productPreview,
+      k_market_strategy: updatedPost.kMarketStrategy,
+      enriched_content: updatedPost.enrichedContent,
+      published: updatedPost.published ?? false,
+      seo: updatedPost.seo,
+      content: updatedPost.content,
+    };
 
-    return NextResponse.json({ success: true, data: updatedPost, isNew: isNewPost });
+    const { error } = await supabase
+      .from('case_studies')
+      .upsert(supabaseData);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, data: { ...updatedPost, id: currentId }, isNew: isNewPost });
   } catch (error) {
     console.error('Error saving post:', error);
     return NextResponse.json(
@@ -64,3 +63,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

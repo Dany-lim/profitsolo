@@ -1,39 +1,28 @@
-import { cache } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { CaseStudy } from '@/types/case-study';
 import { CaseDetailContent } from '@/components/case-detail-content';
 import { CaseDetailNav } from '@/components/case-detail-nav';
-import fs from 'fs/promises';
-import path from 'path';
+import { getCaseStudyById, getPublishedCaseStudies } from '@/lib/data';
 
-// ISR: 1시간마다 재생성 (구글 크롤 효율 극대화)
-export const revalidate = 3600;
+// 데이터베이스 업데이트 시 즉각 반영을 위해 재검증 주기 설정
+export const revalidate = 60; 
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// React cache: 같은 요청 내 JSON 중복 파싱 방지
-const getAllStudies = cache(async (): Promise<CaseStudy[]> => {
-  const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  return JSON.parse(fileContent) as CaseStudy[];
-});
-
-async function getStudy(id: string): Promise<CaseStudy | undefined> {
-  const studies = await getAllStudies();
-  return studies.find((s) => s.id === id);
+async function getStudy(id: string): Promise<CaseStudy | null> {
+  return await getCaseStudyById(id);
 }
 
 // 빌드 시 모든 케이스 페이지를 미리 생성 (SSG + ISR)
 export async function generateStaticParams() {
-  const studies = await getAllStudies();
-  return studies
-    .filter((s) => s.published !== false)
-    .map((s) => ({ id: s.id }));
+  const studies = await getPublishedCaseStudies();
+  return studies.map((s) => ({ id: s.id }));
 }
+
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;

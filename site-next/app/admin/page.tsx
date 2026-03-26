@@ -1,18 +1,15 @@
 import Link from 'next/link';
 import { CaseStudy } from '@/types/case-study';
 import { AdminCaseList } from '@/components/admin-case-list';
-import fs from 'fs/promises';
-import path from 'path';
+import { getAllCaseStudies } from '@/lib/data';
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AdminPage() {
-  // Read JSON file at runtime (always fresh data)
-  const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  const studies = JSON.parse(fileContent) as CaseStudy[];
+  const studies = await getAllCaseStudies();
+
 
   return (
     <div className="min-h-screen bg-slate-50 p-8 pt-24">

@@ -46,3 +46,7 @@ next-env.d.ts
 # temp files
 /tmp/
 .temp/
+
+# local test & walkthrough
+site-next/test_*.mjs
+walkthrough.md

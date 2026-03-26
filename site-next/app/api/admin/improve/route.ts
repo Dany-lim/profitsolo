@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 // Gemini API 클라이언트 초기화 (싱글톤)
 let genAI: GoogleGenerativeAI | null = null;
@@ -68,49 +67,6 @@ async function callGeminiWithRetry(
   throw new Error(`Gemini API 호출 ${maxRetries}회 모두 실패: ${lastError?.message}`);
 }
 
-// 데이터베이스 안전 업데이트 (백업 + 원자적 쓰기)
-function safeUpdateDatabase(dbPath: string, data: any): void {
-  try {
-    // 1. 백업 생성
-    const backupPath = dbPath.replace('.json', `.backup-${Date.now()}.json`);
-    fs.copyFileSync(dbPath, backupPath);
-
-    // 2. JSON 검증
-    const jsonString = JSON.stringify(data, null, 2);
-    JSON.parse(jsonString); // 유효성 검사
-
-    // 3. 임시 파일에 먼저 쓰기
-    const tempPath = dbPath + '.tmp';
-    fs.writeFileSync(tempPath, jsonString, 'utf8');
-
-    // 4. 원자적 교체 (atomic rename)
-    fs.renameSync(tempPath, dbPath);
-
-    // 오래된 백업 정리 (최근 5개만 유지)
-    const dir = path.dirname(dbPath);
-    try {
-      const files = fs.readdirSync(dir)
-        .filter(f => f.startsWith('case-studies.backup-') && f.endsWith('.json'))
-        .map(f => ({
-          name: f,
-          path: path.join(dir, f),
-          time: fs.statSync(path.join(dir, f)).mtime.getTime()
-        }))
-        .sort((a, b) => b.time - a.time); // 최신순 정렬
-
-      // 오래된 백업 삭제
-      files.slice(5).forEach(file => {
-        fs.unlinkSync(file.path);
-      });
-    } catch (cleanupError) {
-      console.warn('백업 정리 중 경고:', cleanupError);
-    }
-
-  } catch (error: any) {
-    throw new Error(`데이터베이스 업데이트 실패: ${error.message}`);
-  }
-}
-
 export async function POST(request: Request) {
   const startTime = Date.now();
 
@@ -126,38 +82,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. 데이터베이스 읽기
-    const dbPath = path.join(process.cwd(), 'data', 'case-studies.json');
+    // 2. 데이터베이스 읽기 (Supabase)
+    const { data: study, error: fetchError } = await supabase
+      .from('case_studies')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (!fs.existsSync(dbPath)) {
-      return NextResponse.json(
-        { error: `데이터베이스를 찾을 수 없습니다: ${dbPath}` },
-        { status: 500 }
-      );
-    }
-
-    const dbContent = fs.readFileSync(dbPath, 'utf8');
-    let db: any[];
-
-    try {
-      db = JSON.parse(dbContent);
-    } catch (parseError) {
-      return NextResponse.json(
-        { error: 'case-studies.json 파싱 실패. JSON 형식을 확인하세요.' },
-        { status: 500 }
-      );
-    }
-
-    const index = db.findIndex((item: any) => item.id === id);
-
-    if (index === -1) {
+    if (fetchError || !study) {
       return NextResponse.json(
         { error: `케이스 스터디를 찾을 수 없습니다: ${id}` },
         { status: 404 }
       );
     }
-
-    const study = db[index];
 
     // 3. Gemini API 클라이언트 초기화
     let client: GoogleGenerativeAI;
@@ -240,13 +177,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // 데이터베이스 안전 업데이트
-    db[index].content = newContent;
-    db[index].lastImproved = new Date().toISOString();
-    db[index].improvedBy = 'Startup Radar AI';
-    db[index].modelUsed = selectedModelName;
+    // Supabase 업데이트
+    const { error: updateError } = await supabase
+      .from('case_studies')
+      .update({
+        content: newContent,
+        last_improved: new Date().toISOString(),
+        improved_by: 'Startup Radar AI',
+        model_used: selectedModelName
+      })
+      .eq('id', id);
 
-    safeUpdateDatabase(dbPath, db);
+    if (updateError) throw updateError;
 
     const duration = Date.now() - startTime;
 
@@ -276,15 +218,9 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const client = getGeminiClient();
-    const dbPath = path.join(process.cwd(), 'data', 'case-studies.json');
-    const dbExists = fs.existsSync(dbPath);
-
     return NextResponse.json({
       status: 'healthy',
       geminiApiKey: !!process.env.GEMINI_API_KEY,
-      databaseExists: dbExists,
-      availableModels: STABLE_MODELS,
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
@@ -294,3 +230,4 @@ export async function GET() {
     }, { status: 500 });
   }
 }
+

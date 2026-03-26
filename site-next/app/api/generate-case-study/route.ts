@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import fs from 'fs/promises';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
+
 
 const APPROVED_TAGS = [
   "AI", "Automation", "B2B SaaS", "Community", "Discord", "Fintech",
@@ -300,22 +300,44 @@ ${JSON.stringify(APPROVED_TAGS)}
     }
 
     // Save to database
-    const dbPath = path.join(process.cwd(), 'data', 'case-studies.json');
-    const fileContent = await fs.readFile(dbPath, 'utf-8');
-    const studies = JSON.parse(fileContent);
-
     // Ensure unique ID
+    const { data: existing } = await supabase
+      .from('case_studies')
+      .select('id')
+      .ilike('id', `${caseStudy.id}%`);
+
     let finalId = caseStudy.id;
-    let counter = 1;
-    while (studies.some((s: any) => s.id === finalId)) {
-      finalId = `${caseStudy.id}-${counter}`;
-      counter++;
+    if (existing && existing.length > 0) {
+      finalId = `${caseStudy.id}-${existing.length + 1}`;
     }
     caseStudy.id = finalId;
 
-    // Add to beginning
-    studies.unshift(caseStudy);
-    await fs.writeFile(dbPath, JSON.stringify(studies, null, 2), 'utf-8');
+    const supabaseData = {
+      id: caseStudy.id,
+      title: caseStudy.title,
+      korean_title: caseStudy.koreanTitle,
+      byline: caseStudy.byline,
+      url: caseStudy.url,
+      mrr: caseStudy.mrr,
+      launch_date: caseStudy.launchDate,
+      thumbnail_image: caseStudy.thumbnailImage,
+      tags: caseStudy.tags,
+      metrics: caseStudy.metrics,
+      executive_summary: caseStudy.executiveSummary,
+      product_preview: caseStudy.productPreview,
+      k_market_strategy: caseStudy.kMarketStrategy,
+      enriched_content: caseStudy.enrichedContent,
+      published: false,
+      seo: caseStudy.seo,
+      content: caseStudy.content,
+    };
+
+    const { error: dbError } = await supabase
+      .from('case_studies')
+      .insert(supabaseData);
+
+    if (dbError) throw dbError;
+
 
     return NextResponse.json({
       success: true,

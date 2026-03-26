@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,27 +13,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const caseStudies = JSON.parse(fileContent);
+    // Get current published status
+    const { data: study, error: fetchError } = await supabase
+      .from('case_studies')
+      .select('published')
+      .eq('id', id)
+      .single();
 
-    const study = caseStudies.find((s: any) => s.id === id);
-
-    if (!study) {
+    if (fetchError || !study) {
       return NextResponse.json(
         { error: 'Case study not found' },
         { status: 404 }
       );
     }
 
-    study.published = !study.published;
+    const { error: updateError } = await supabase
+      .from('case_studies')
+      .update({ published: !study.published })
+      .eq('id', id);
 
-    await fs.writeFile(filePath, JSON.stringify(caseStudies, null, 2), 'utf-8');
+    if (updateError) throw updateError;
 
     return NextResponse.json({
       success: true,
-      published: study.published,
+      published: !study.published,
     });
+
   } catch (error) {
     console.error('Error toggling publish:', error);
     return NextResponse.json(

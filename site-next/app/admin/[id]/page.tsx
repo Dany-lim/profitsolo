@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import { CaseStudy } from '@/types/case-study';
 import { CaseEditorForm } from '@/components/case-editor-form';
-import fs from 'fs/promises';
-import path from 'path';
+import { getCaseStudyById } from '@/lib/data';
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic';
@@ -14,13 +13,8 @@ interface PageProps {
 
 export default async function AdminEditPage({ params }: PageProps) {
   const { id } = await params;
+  const study = await getCaseStudyById(id);
 
-  // Read JSON file at runtime (no caching)
-  const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  const studies = JSON.parse(fileContent) as CaseStudy[];
-
-  const study = studies.find((s) => s.id === id);
 
   if (!study) {
     notFound();

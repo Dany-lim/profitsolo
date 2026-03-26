@@ -1,18 +1,15 @@
 import { CaseStudy } from '@/types/case-study';
 import { HomeContent } from '@/components/home-content';
-import fs from 'fs/promises';
-import path from 'path';
+import { getPublishedCaseStudies } from '@/lib/data';
 
-// ISR: 1시간마다 재생성 (구글 크롤 효율 극대화)
-export const revalidate = 3600;
+// 데이터베이스 업데이트 시 즉각 반영을 위해 ISR 대신 적절한 재검증 주기 설정 (또는 실시간을 원하면 0)
+export const revalidate = 60; // 1분마다 재검증
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://profitsolo.net';
 
 export default async function Home() {
-  const filePath = path.join(process.cwd(), 'data', 'case-studies.json');
-  const fileContent = await fs.readFile(filePath, 'utf-8');
-  const allStudies = JSON.parse(fileContent) as CaseStudy[];
-  const studies = allStudies.filter(s => s.published !== false);
+  const studies = await getPublishedCaseStudies();
+
 
   const jsonLd = {
     '@context': 'https://schema.org',
