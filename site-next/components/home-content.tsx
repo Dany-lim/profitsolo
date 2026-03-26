@@ -1,0 +1,252 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { CaseStudy } from '@/types/case-study';
+import { CaseStudyCard } from '@/components/case-study-card';
+
+interface HomeContentProps {
+  initialStudies: CaseStudy[];
+}
+
+export function HomeContent({ initialStudies }: HomeContentProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTag, setActiveTag] = useState('All');
+
+  // Extract unique tags from all case studies
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    initialStudies.forEach((study) => {
+      study.tags.forEach((tag) => tagSet.add(tag));
+    });
+    return ['All', ...Array.from(tagSet).sort()];
+  }, [initialStudies]);
+
+  // Filter studies based on search and tag
+  const filteredStudies = useMemo(() => {
+    return initialStudies.filter((study) => {
+      const matchesSearch =
+        searchQuery === '' ||
+        study.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        study.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+      const matchesTag =
+        activeTag === 'All' || study.tags.includes(activeTag);
+
+      return matchesSearch && matchesTag;
+    });
+  }, [initialStudies, searchQuery, activeTag]);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Magazine-style Sticky Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-3 items-center py-4">
+            {/* Left Navigation */}
+            <div className="flex gap-6">
+              <Link
+                href="#about"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                사이트 소개
+              </Link>
+              <Link
+                href="/"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                케이스 스터디
+              </Link>
+            </div>
+
+            {/* Center Logo */}
+            <div className="text-center">
+              <Link href="/">
+                <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-2xl font-bold text-transparent">
+                  Startup Radar
+                </span>
+              </Link>
+            </div>
+
+            {/* Right Navigation */}
+            <div className="flex justify-end gap-6">
+              <Link
+                href="#join"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                레이더망 합류하기
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="animate-hero text-center">
+            <h1 className="mb-6 text-5xl font-bold leading-tight text-slate-900 sm:text-6xl lg:text-7xl">
+              조용히 세상을 지배하는
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+                1인 기업 해부학
+              </span>
+            </h1>
+            <p className="mx-auto mb-12 max-w-2xl text-lg text-slate-600 sm:text-xl">
+              광고비 0원, 100% 자동화, 압도적 이익률.
+              <br />
+              월 1,000만 원 이상을 벌어들이는 전 세계 숨겨진 알짜 비즈니스를 치밀하게 분석합니다.
+            </p>
+
+            {/* Search Bar */}
+            <div className="mx-auto mb-8 max-w-2xl">
+              <div className="relative">
+                <svg
+                  className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="케이스 스터디 검색..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-full border border-slate-200 bg-white py-4 pl-12 pr-6 text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+            </div>
+
+            {/* Tag Filters */}
+            <div className="flex flex-wrap justify-center gap-3">
+              {allTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setActiveTag(tag)}
+                  className={`rounded-full border px-6 py-2 text-sm font-medium transition-all ${
+                    activeTag === tag
+                      ? 'border-orange-500 bg-orange-500 text-white shadow-md'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Case Studies Grid */}
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <p className="text-slate-600">
+            {filteredStudies.length}개의 케이스 스터디
+          </p>
+        </div>
+
+        {filteredStudies.length > 0 ? (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredStudies.map((study, index) => (
+              <CaseStudyCard key={study.id} study={study} index={index} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-20 text-center">
+            <p className="text-lg text-slate-500">
+              검색 결과가 없습니다. 다른 키워드로 시도해보세요.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="border-t border-slate-100 bg-slate-50">
+        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="animate-fade-in-up space-y-12">
+            {/* Main Title */}
+            <div className="text-center">
+              <h2 className="mb-4 text-4xl font-bold text-slate-900 sm:text-5xl">
+                위대한 아이디어는 하늘에서 떨어지지 않습니다
+              </h2>
+              <p className="text-xl font-semibold text-blue-600">
+                우리가 조용히 세상을 지배하는 '1인 기업'의 해부도를 추적하는 이유
+              </p>
+            </div>
+
+            {/* Content Box 1 */}
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-8 sm:p-12">
+              <div className="space-y-6 text-lg leading-relaxed text-slate-700">
+                <p>
+                  우리는 오랫동안 거대한 착각 속에 살아왔습니다. '창업'이라고 하면 으레 번듯한 사무실을 빌리고, 수십억 원의 투자금을 유치하며, 수십 명의 직원을 먹여 살리는 뼈깎는 고통의 길이라고 배워왔기 때문입니다.
+                </p>
+                <p>
+                  하지만 세상의 이면에는 완전히 다른 규칙으로 돌아가는 은밀하고 거대한 시장이 존재합니다. 바로 노트북 한 대, AI 툴 하나만을 가지고 방구석에서 조용히 월 수천만 원의 자동화 수익을 꽂아 넣는 <span className="font-semibold text-orange-600">'1인 기업가(Solo-founder)'</span>들의 세계입니다.
+                </p>
+                <p>
+                  저희 <span className="font-semibold text-blue-600">Startup Radar</span>가 이 사이트를 개설하고 전 세계에 숨겨진 1인 창업가들의 사례를 집요하게 추적하는 이유는 단 하나입니다. 바로 그들의 <span className="font-semibold">'작고 단단한 성공 방식'</span>이 우리 모두에게 가장 현실적인 경제적 자유를 가져다줄 유일한 열쇠라고 믿기 때문입니다.
+                </p>
+              </div>
+            </div>
+
+            {/* Content Box 2 */}
+            <div className="rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50 to-white p-8 sm:p-12">
+              <h3 className="mb-6 text-2xl font-bold text-orange-600">
+                발견하고, 연결하고, 즉각 실행하라
+              </h3>
+              <div className="space-y-6 text-lg leading-relaxed text-slate-700">
+                <p>
+                  1인 창업은 세상을 바꿀 거창하고 거대한 혁신을 만들어내는 프로젝트가 아닙니다. 1인 창업의 본질은 무언가 일상에서 불편함을 느꼈거나 번뜩이는 아이디어가 생각났을 때, 완벽을 기하느라 1년을 허비하는 대신 <span className="font-semibold text-orange-600">'오늘 당장 조잡하더라도 만들어보는 즉각적인 실행력'</span>에 있습니다.
+                </p>
+                <p>
+                  하지만, 그 '번뜩이는 아이디어'조차 백지상태에서는 절대 나오지 않습니다. 천재적인 영감은 하늘에서 뚝 떨어지는 것이 아니라, 이미 시장에서 돈을 벌고 있는 수많은 남들의 <span className="font-semibold">'작은 성공 사례(Case Studies)'</span>들을 끊임없이 관찰하고 훔쳐보는 과정에서 비로소 이리저리 연결되며 탄생합니다.
+                </p>
+                <p className="font-semibold text-blue-600">
+                  당신이 더 많은 비즈니스 모델을 둘러볼수록, 당신의 뇌는 새로운 시장에 적용할 수 있는 마법 같은 연결고리를 뿜어내게 될 것입니다.
+                </p>
+              </div>
+            </div>
+
+            {/* Content Box 3 */}
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-orange-50 p-8 sm:p-12">
+              <h3 className="mb-6 text-2xl font-bold text-blue-600">
+                누구를 위한 레이더망인가요?
+              </h3>
+              <div className="space-y-6 text-lg leading-relaxed text-slate-700">
+                <p>
+                  이곳은 지긋지긋한 회사 로직에서 벗어나 나만의 비즈니스를 갖고 싶은 예비 창업가, 코딩은 알지만 무엇을 만들어야 돈이 되는지 모르는 개발자, 해외의 트렌드를 낚아채 한국 시장을 선점하고 싶은 기획자를 위한 <span className="font-semibold text-orange-600">'아이디어 무기고'</span>입니다.
+                </p>
+                <p>
+                  수백 개의 해외 블로그를 뒤질 필요가 없습니다. 영감이 스친 바로 그 순간, 책상을 박차고 일어나 즉각적으로 <span className="font-semibold text-blue-600">실행(Execute)</span> 하십시오.
+                </p>
+                <p className="text-xl font-bold text-orange-600">
+                  바로 지금 여러분이 스크롤을 내릴 이 페이지에 당신의 첫 아이디어가 숨어 있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm text-slate-500">
+              © 2026 Startup Radar. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

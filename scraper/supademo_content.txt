@@ -1,0 +1,171 @@
+Title: How My Demo App Makes $200K/Month
+
+================================================================================
+
+Content:
+
+
+## Who are you and what business did you start?
+
+I’m Joseph Lee, the co-founder and CEO of Supademo.
+
+Supademo is an AI-powered demo platform that makes it effortless for anyone to create interactive product demos that convert.
+
+Our customers are a mix of founders, marketers, sales teams, and customer success pros at companies of all sizes, from scrappy startups to enterprises like Siemens, Pokémon, and Lightspeed.
+
+What makes Supademo special is how fast and magical it feels: in seconds, you can capture any workflow, turn it into an interactive, branded, shareable experience, and even generate localized versions, voiceovers, demo data, and analytics: all powered by AI.
+
+We’re now a profitable, mid-7-figure ARR SaaS platform, trusted by 100,000+ professionals across 100+ countries, and recently recognized as G2’s #5 fastest-growing software product.
+
+Want to start an interactive product demos business? Learn more ➜
+
+
+## What problem does your business solve?
+
+Founders struggle to convey the value, benefits, or functionality of their products or features through just words or images alone.
+
+
+## How do you come up with the idea for Supademo?
+
+Supademo was born from personal frustration.
+
+For six years before Supademo, I ran a startup called Freshline that operates at the intersection of food distribution and technology.
+
+Selling a complicated product in a nuanced, traditional industry, I spent endless hours trying to explain our product to distributors and non-technical users. Decks and videos didn’t cut it; they were static, long, and instantly outdated upon product changes.
+
+Not to mention the insane amount of effort to create one in the first place.
+
+But I noticed that when I’d walk people through our app live, click by click, in a more interactive session, you could literally see their lightbulb moment: the “aha” moment when they realized they needed our product.
+
+Meanwhile, my co-founder, Koushik, ran a creative agency that built explainer videos for clients, where he had the exact same pain but from the production side.
+
+Through our experiences, what Koushik and I realized is that the world didn’t need another video tool. It needed something that feels like a live product without the friction: instant, dynamic, interactive, editable, and scalable.
+
+What started off as a small side project quickly grew into thousands of users, and now enables over 100k marketers, operators, and founders around the world. And we’re just getting started!
+
+
+## How did you build the initial version of Supademo?
+
+They built the platform using 
+- NextJS 
+- Prisma 
+- PlanetScale DB 
+- TailwindCSS
+
+
+## How did you launch Supademo and get initial traction?
+
+We didn’t launch with a PR blitz or ads: just a lot of hustle, grit, and a bit of curiosity.
+
+We got our first customers by obsessing over product craftsmanship and velocity. From day one, we clamped down on feature creep and made sure Supademo felt delightful, fast, and intuitive, regardless of someone’s technical background.
+
+We shipped weekly, gathered feedback in real time, and iterated fast (prioritizing speed of execution over scalability, initially).
+
+Further traction came from lean, product-led experimentation. We removed friction everywhere:
+
+Ungated product access
+
+Free tools built from subsets of our core experience
+
+Programmatic SEO answering common SaaS tutorials with embedded demos
+
+And reverse trials that let anyone use our full platform instantly with no signup required
+
+Ultimately, every Supademo shared became its own mini billboard, fueling product-led virality.
+
+We paired this with SEO and founder-led content: from programmatic TOFU pages (interactive “how-to” demos piggybacking on popular product searches) to MOFU comparison and “{product} demo” pages that ranked fast.
+
+On LinkedIn, I share honest, tactical founder lessons that turned into a brand moat, growing from 1k to 14k followers and over 1M impressions in one year.
+
+Otherwise, in our earliest days, we did things that didn’t scale:
+
+Creating posts on Indie Hackers or guest blogs, focusing on thought leadership or sharing tactical lessons we learned as early-stage founders to contribute to the broader community (and in a full-circle moment, we were recently featured on Indie Hacker’s front page!)
+
+Offering to create product demos for select leads, which is highly unscalable. For example, I posted on Reddit’s SaaS subreddit, offering to create free interactive product demos or guides for anyone who sent me a link to their product. The post went semi-viral, attracting hundreds of comments and over 11,000 views in 24 hours. While it took me a few hours to create those demos, it paid off with many new users and some paying customers.
+
+Responding to product update emails from companies with a custom interactive demo link showcasing the recently shipped feature, creating a “wow” factor and sparking an “aha” moment as quickly as possible.
+
+My post on Reddit 3 years ago!
+
+These methods (among hundreds of other tactics and channels) helped us connect with our target customers, promote our product, and scale to our first 10, 100, and 1000+ customers.
+
+
+## What was the growth strategy for Supademo and how did you scale?
+
+Our biggest growth drivers have been SEO, viral product loops, customer storytelling, and support as a real differentiator.
+
+Every time a user creates a demo, shares it, or invites a teammate, that becomes a mini billboard for the product. That “built-in virality,” paired with helpful content (founder stories, PLG tips, onboarding guides), helped us rank and grow organically. But what really elevated us: teaching our team that support is not an afterthought, it's a competitive edge.
+
+We didn’t just build self-serve tooling and hope users figure it out. We offered hands-on onboarding, personal check-ins, and proactive help. This turned first-time users into champions who told their networks about us.
+
+We also leaned into founder-brand authenticity. I posted transparent lessons on LinkedIn (wins, failures, experiments) and that genuine voice built trust beyond the product. It wasn’t just “we have a good tool”, it was “we care, we respond, we partner with you”.
+
+If you’re building a startup: focus less on tricks and more on showing value fast, moving faster than everyone else, and supporting every user like they matter.
+
+A product and support experience that helps someone in near instantly will almost always outgrow marketing hacks.
+
+
+## What's the pricing strategy for Supademo?
+
+Supademo offers flexible pricing plans and a free plan:
+
+Custom Enterprise plan
+
+
+## What were the biggest lessons learned from building Supademo?
+
+We made plenty of mistakes as we scaled Supademo: shipping too slowly early on, chasing shiny features, or underpricing ourselves (we used to charge $12/month for five seats 💀).
+
+In fact, we likely wasted months of our startup journey on things that didn't matter. Here are just some of the challenges and mistakes that come to mind:
+
+Chasing feedback from people who don't pay
+
+Obsessing over competitors instead of customers
+
+Prioritizing investor pitches over sales pitches
+
+Casual “intro chats” with VCs outside of fundraising efforts
+
+Spending time with advisors who never built anything material
+
+Building a detailed overcomplicated financial models
+
+Over-analyzing non-core metrics/data
+
+Diluting focus away from the core product too early
+
+Revamping the landing page 10 times before launching
+
+Hiring marketing before knowing what you're selling
+
+Building internal tools to save $20/month
+
+Chasing press/notoriety without a clear way to convert that attention
+
+The biggest lesson we learned is that most of what feels “important” in the early innings is just sophisticated procrastination. 90%+ of your energy as a founder should really go toward three things instead:
+
+Shipping new features and improvements
+
+Selling and distributing your product (and refining how you do it)
+
+If you do these three things exceptionally well, you’re going to win 99% of the time. And while you can’t control luck or timing, you can create your own opportunity by showing up every day and doing, not telling.
+
+
+## Supademo Acquisition: How much did Supademo sell for and what was the acquisition price?
+
+While Supademo hasn't been acquired, we've grown incredibly quickly, and we're just getting started. Our next goal is to help over a million businesses demonstrate their products more effectively.
+
+
+## Discover Similar Business Ideas Like Supademo
+
+AI tool that helps content creators, founders, and marketers make VIRAL content & ads with AI while saving 100's of hours per month
+
+"Create real-time status pages for seamless customer updates."
+
+Joseph Lee is the founder of Supademo.
+
+Joseph Lee started the business in 2023, and currently makes an average of $2.4M/year.
+
+
+## More Business Ideas Like This
+

@@ -1,0 +1,48 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
+build/
+
+# misc
+.DS_Store
+*.pem
+*.log
+.vercel
+**/.vercel/
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints
+.venv/
+env/
+venv/
+ENV/
+
+# env files
+.env*
+!.env.example
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# temp files
+/tmp/
+.temp/
