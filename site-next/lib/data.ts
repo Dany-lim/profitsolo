@@ -15,6 +15,8 @@ const mapCaseStudy = (item: any): CaseStudy => ({
   executiveSummary: item.executive_summary || [],
   productPreview: item.product_preview || {},
   kMarketStrategy: item.k_market_strategy || {},
+  sourceTitle: item.source_title,
+  sourceUrl: item.source_url,
   enrichedContent: item.enriched_content,
   published: item.published,
   seo: item.seo || {},

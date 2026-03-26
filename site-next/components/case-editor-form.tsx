@@ -56,6 +56,9 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
     mrr: study.mrr,
     thumbnailImage: study.thumbnailImage,
     content: study.content,
+    url: study.url || '',
+    sourceTitle: study.sourceTitle || '',
+    sourceUrl: study.sourceUrl || '',
     tags: study.tags.join(', '),
     productPreviewImage: study.productPreview?.localImage || '',
     seoMetaTitle: study.seo?.metaTitle || '',
@@ -400,6 +403,9 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         title: formData.title,
         launchDate: formData.launchDate,
         mrr: formData.mrr,
+        url: formData.url,
+        sourceTitle: formData.sourceTitle,
+        sourceUrl: formData.sourceUrl,
         thumbnailImage: formData.thumbnailImage,
         content: formData.content,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
@@ -496,6 +502,47 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
               value={formData.mrr}
               onChange={(e) => setFormData({ ...formData, mrr: e.target.value })}
               placeholder="월 800만원"
+            />
+          </div>
+        </div>
+
+        {/* URL & Source */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="url" className="text-base font-semibold">
+              홈페이지 주소
+            </Label>
+            <Input
+              id="url"
+              value={formData.url}
+              onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+              placeholder="https://example.com"
+            />
+          </div>
+        </div>
+
+        {/* Source */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="sourceTitle" className="text-base font-semibold">
+              출처 제목
+            </Label>
+            <Input
+              id="sourceTitle"
+              value={formData.sourceTitle}
+              onChange={(e) => setFormData({ ...formData, sourceTitle: e.target.value })}
+              placeholder="Starter Story, IndieHackers 등"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="sourceUrl" className="text-base font-semibold">
+              출처 URL
+            </Label>
+            <Input
+              id="sourceUrl"
+              value={formData.sourceUrl}
+              onChange={(e) => setFormData({ ...formData, sourceUrl: e.target.value })}
+              placeholder="https://starterstory.com/stories/..."
             />
           </div>
         </div>

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       currentId = finalId;
     }
 
-    const supabaseData = {
+    const supabaseData: Record<string, any> = {
       id: currentId,
       title: updatedPost.title,
       korean_title: updatedPost.koreanTitle,
@@ -42,15 +42,28 @@ export async function POST(request: NextRequest) {
       executive_summary: updatedPost.executiveSummary,
       product_preview: updatedPost.productPreview,
       k_market_strategy: updatedPost.kMarketStrategy,
+      source_title: updatedPost.sourceTitle,
+      source_url: updatedPost.sourceUrl,
       enriched_content: updatedPost.enrichedContent,
       published: updatedPost.published ?? false,
       seo: updatedPost.seo,
       content: updatedPost.content,
     };
 
-    const { error } = await supabaseAdmin
+    // Try saving with all fields first
+    let { error } = await supabaseAdmin
       .from('case_studies')
       .upsert(supabaseData);
+
+    // If source columns don't exist yet, retry without them
+    if (error && error.message?.includes('source_')) {
+      delete supabaseData.source_title;
+      delete supabaseData.source_url;
+      const retry = await supabaseAdmin
+        .from('case_studies')
+        .upsert(supabaseData);
+      error = retry.error;
+    }
 
     if (error) throw error;
 

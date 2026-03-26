@@ -41,6 +41,8 @@ export interface CaseStudy {
   executiveSummary?: string[];
   productPreview?: ProductPreview;
   kMarketStrategy?: MarketStrategy;
+  sourceTitle?: string;
+  sourceUrl?: string;
   enrichedContent?: string;
   published?: boolean;
   seo?: SeoData;
