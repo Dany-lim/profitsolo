@@ -177,6 +177,8 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           content: formData.content,
           title: formData.title,
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
+          sourceUrl: formData.sourceUrl || undefined,
+          homepageUrl: formData.url || undefined,
           customInstruction: customInstruction.trim() || undefined,
           baronFeedback: validationReport ? {
             verdict: validationReport.verdict,
@@ -267,6 +269,8 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           content: formData.content,
           title: formData.title,
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
+          sourceUrl: formData.sourceUrl || undefined,
+          homepageUrl: formData.url || undefined,
           baronFeedback: {
             verdict: validationReport.verdict,
             fixes: validationReport.fixes,

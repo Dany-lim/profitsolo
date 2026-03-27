@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { content, title, context, customInstruction, baronFeedback } = await request.json();
+    const { content, title, context, customInstruction, baronFeedback, sourceUrl, homepageUrl } = await request.json();
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
@@ -135,6 +135,8 @@ ${content}
 
 [제목]: ${title}
 ${context ? `[추가 정보]: ${context}` : ''}
+${homepageUrl ? `[서비스 공식 URL]: ${homepageUrl}` : ''}
+${sourceUrl ? `[출처 기사 URL]: ${sourceUrl}` : ''}
 ${customInstruction ? `[편집자 추가 지시 — 반드시 반영할 것]
 ${customInstruction}
 ` : ''}[현재 콘텐츠]
