@@ -118,12 +118,13 @@ ${content}
 
 [분량] 5,000~8,000자.
 
-[외부 링크 삽입 규칙]
-- 본문에 언급되는 서비스, 도구, 플랫폼이 있으면 반드시 첫 등장 시 [텍스트](URL) 마크다운 링크로 삽입하라.
-- URL이 본문에 텍스트로 노출되면 안 된다. 반드시 마크다운 링크 형식만 사용.
-- 최소 2개 이상의 외부 링크를 포함하라.
+[외부 링크 삽입 규칙 — 필수]
+- 아래 [참조 URL]에 제공된 URL은 반드시 본문 첫 등장 시 [서비스명](URL) 형태로 삽입하라. 이것은 필수다.
+- 그 외에 본문에 언급되는 유명 서비스/도구(Stripe, Notion, Shopify, WordPress, Google 등)도 공식 URL을 알면 링크를 걸어라.
+- 최소 2개 이상의 외부 링크를 반드시 포함하라. 링크가 0개인 결과물은 불합격이다.
 - 같은 서비스가 여러 번 등장하면 첫 번째만 링크 걸고 이후는 텍스트만.
-- URL을 모르는 서비스는 링크 없이 텍스트로만 표기하라. 절대 가짜 URL을 만들지 마라.
+- URL을 확실히 모르는 서비스만 링크 없이 텍스트로 표기. 가짜 URL 금지.
+- 예시: [Stripe](https://stripe.com), [Notion](https://notion.so)
 
 [절대 금지]
 - 마크다운 표 금지. 파이프 기호 금지.
@@ -135,8 +136,9 @@ ${content}
 
 [제목]: ${title}
 ${context ? `[추가 정보]: ${context}` : ''}
-${homepageUrl ? `[서비스 공식 URL]: ${homepageUrl}` : ''}
-${sourceUrl ? `[출처 기사 URL]: ${sourceUrl}` : ''}
+${homepageUrl || sourceUrl ? `[참조 URL — 본문에 반드시 마크다운 링크로 삽입할 것]
+${homepageUrl ? `- 서비스 공식: ${homepageUrl}` : ''}
+${sourceUrl ? `- 출처 기사: ${sourceUrl}` : ''}` : ''}
 ${customInstruction ? `[편집자 추가 지시 — 반드시 반영할 것]
 ${customInstruction}
 ` : ''}[현재 콘텐츠]
