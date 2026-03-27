@@ -51,6 +51,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
   const [preImproveReport, setPreImproveReport] = useState<ValidationReport | null>(null);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [customInstruction, setCustomInstruction] = useState('');
+  const [lastValidatedContent, setLastValidatedContent] = useState<string>('');
   const [formData, setFormData] = useState({
     title: study.title,
     launchDate: study.launchDate,
@@ -209,6 +210,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           const revalidateData = await revalidateRes.json();
           if (revalidateData.success) {
             setValidationReport(revalidateData.report);
+            setLastValidatedContent(improvedContent);
             setValidationOpen(true);
           }
         } catch (revalError) {
@@ -296,6 +298,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           const revalidateData = await revalidateRes.json();
           if (revalidateData.success) {
             setValidationReport(revalidateData.report);
+            setLastValidatedContent(improvedContent);
             setValidationOpen(true);
           }
         } catch (revalError) {
@@ -359,6 +362,12 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
       return;
     }
 
+    // 콘텐츠가 변경되지 않았고 이전 검증 결과가 있으면 캐시된 결과 표시
+    if (validationReport && formData.content === lastValidatedContent) {
+      setValidationOpen(true);
+      return;
+    }
+
     setIsValidating(true);
     setValidationReport(null);
     setValidationOpen(true);
@@ -377,6 +386,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
 
       if (data.success) {
         setValidationReport(data.report);
+        setLastValidatedContent(formData.content);
       } else {
         alert('검증 실패: ' + (data.error || 'Unknown error'));
       }
