@@ -156,7 +156,7 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
         >
           <ReactMarkdown
             components={{
-              a: ({ href, children, ...props }) => {
+              a: ({ href, children }) => {
                 const isExternal =
                   href &&
                   (href.startsWith('http://') || href.startsWith('https://'));
@@ -166,14 +166,13 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      {...props}
                     >
                       {children}
                     </a>
                   );
                 }
                 return (
-                  <a href={href} {...props}>
+                  <a href={href}>
                     {children}
                   </a>
                 );
