@@ -116,6 +116,41 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
     ];
   }, [formData.seoFocusKeyword, formData.seoMetaTitle, formData.seoMetaDescription, formData.title, formData.content]);
 
+  // 이미지 압축: Canvas API로 리사이즈 + WebP 변환
+  const compressImage = useCallback(async (file: File, maxWidth = 1200, quality = 0.8): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], `image-${Date.now()}.webp`, { type: 'image/webp' }));
+            } else {
+              resolve(file);
+            }
+          },
+          'image/webp',
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = URL.createObjectURL(file);
+    });
+  }, []);
+
   // Generic image paste handler
   const createPasteHandler = useCallback((field: 'thumbnailImage' | 'productPreviewImage') => {
     return async (e: React.ClipboardEvent) => {
@@ -127,10 +162,11 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           e.preventDefault();
           const file = items[i].getAsFile();
           if (file) {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-
             try {
+              const compressed = await compressImage(file);
+              const uploadData = new FormData();
+              uploadData.append('file', compressed);
+
               const response = await fetch('/api/upload-image', {
                 method: 'POST',
                 body: uploadData,
@@ -139,7 +175,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
               if (data.success) {
                 setFormData((prev) => ({ ...prev, [field]: data.url }));
               } else {
-                alert('이미지 업로드 실패');
+                alert('이미지 업로드 실패: ' + (data.error || ''));
               }
             } catch (error) {
               console.error('Upload error:', error);
@@ -150,7 +186,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         }
       }
     };
-  }, []);
+  }, [compressImage]);
 
   const handlePaste = createPasteHandler('thumbnailImage');
   const handleProductImagePaste = createPasteHandler('productPreviewImage');
