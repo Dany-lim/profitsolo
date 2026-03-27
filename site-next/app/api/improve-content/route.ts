@@ -36,7 +36,49 @@ export async function POST(request: NextRequest) {
       throw new Error('All models unavailable');
     }
 
-    const prompt = `당신은 논픽션 스토리텔러입니다. 아래 콘텐츠를 영화처럼 몰입감 있는 창업 스토리로 개선하세요.
+    let prompt: string;
+
+    if (baronFeedback) {
+      // 바론 피드백 기반 수정 — 지적사항만 고치고 나머지는 보존
+      prompt = `당신은 편집 교정자입니다. 아래 콘텐츠에서 검증 에이전트 "바론"이 지적한 부분만 정확히 수정하세요.
+
+[핵심 원칙]
+- 바론이 지적한 부분만 고쳐라. 나머지 문장, 단락, 구조, 표현은 한 글자도 바꾸지 마라.
+- 원문의 순서, 제목(##), 단락 구조를 그대로 유지하라.
+- 새로운 섹션을 추가하거나 기존 섹션을 삭제하지 마라.
+- 전체를 다시 쓰는 것은 절대 금지. 부분 수정만 허용.
+
+[바론 판정]: ${baronFeedback.verdict}
+[바론 코멘트]: ${baronFeedback.baronComment || '없음'}
+
+${baronFeedback.fixes?.length ? `[수정 지시 — 모두 반영할 것]
+${baronFeedback.fixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : ''}
+
+${baronFeedback.redFlags?.length ? `[Red Flags — 해당 부분만 수정]
+${baronFeedback.redFlags.map((f: string) => `- ${f}`).join('\n')}` : ''}
+
+${baronFeedback.bannedWords?.length ? `[금지어 — 삭제하거나 자연스러운 표현으로 대체]
+${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
+
+[수정 방법]
+- "감정 없는 서술" 지적 → 해당 단락에만 창업자의 감정, 고민, 실패 경험을 자연스럽게 추가
+- "추상적 결론" 지적 → 해당 문장만 구체적 수치/사례로 교체
+- "동일한 문장 구조 반복" 지적 → 해당 구간의 문장 길이와 구조만 다양하게 변경
+- "과도한 형용사" 지적 → 해당 형용사만 삭제하거나 구체적 표현으로 대체
+- 금지어 → 해당 단어만 삭제하거나 대체
+- 외부 링크 부족 → 기존 텍스트에 마크다운 링크만 추가 (문장 자체는 수정 금지)
+
+${customInstruction ? `[편집자 추가 지시]
+${customInstruction}` : ''}
+
+[현재 콘텐츠 — 지적된 부분만 수정하고 나머지는 그대로 출력하라]
+${content}
+
+수정된 마크다운 본문만 출력하라. 설명이나 메타 코멘트 없이 본문만.`;
+
+    } else {
+      // 일반 개선 — 전체 리라이팅
+      prompt = `당신은 논픽션 스토리텔러입니다. 아래 콘텐츠를 영화처럼 몰입감 있는 창업 스토리로 개선하세요.
 
 [문체 & 톤]
 - 소설처럼 써라. 원문에 장소와 시기가 있으면 장면 묘사로 시작하라. 없으면 억지로 지어내지 마라.
@@ -72,35 +114,13 @@ export async function POST(request: NextRequest) {
 
 [제목]: ${title}
 ${context ? `[추가 정보]: ${context}` : ''}
-${baronFeedback ? `
-[바론(SEO/AI 검증 에이전트) 피드백 — 반드시 반영할 것]
-바론 판정: ${baronFeedback.verdict}
-바론 코멘트: ${baronFeedback.baronComment || '없음'}
-
-${baronFeedback.fixes?.length ? `[구체적 수정 지시]
-${baronFeedback.fixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : ''}
-
-${baronFeedback.redFlags?.length ? `[적발된 Red Flags — 해결 필수]
-${baronFeedback.redFlags.map((f: string) => `- ${f}`).join('\n')}` : ''}
-
-${baronFeedback.bannedWords?.length ? `[금지어 발견 — 반드시 대체하거나 제거]
-${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
-` : ''}
 ${customInstruction ? `[편집자 추가 지시 — 반드시 반영할 것]
 ${customInstruction}
 ` : ''}[현재 콘텐츠]
 ${content}
 
-위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${customInstruction ? ` 특히 편집자의 추가 지시를 최우선으로 반영하라.` : ''}${baronFeedback ? `
-
-[중요: 수정 원칙]
-1. 바론이 지적한 모든 항목(Red Flags, 금지어, 수정 지시)을 빠짐없이 확실하게 고쳐라. 살짝 바꾸는 게 아니라 바론이 다시 검증해도 통과할 수준으로 근본적으로 수정하라.
-2. 바론이 문제 삼지 않은 문장, 단락, 구조는 절대 건드리지 마라. 원문 그대로 유지.
-3. 금지어는 반드시 삭제하거나 자연스러운 다른 표현으로 대체하라.
-4. Red Flag가 "감정 없는 서술"이면 해당 단락에 창업자의 감정/고민/실패를 추가하라.
-5. Red Flag가 "추상적 결론"이면 구체적 수치와 사례로 보강하라.
-6. Red Flag가 "동일한 문장 구조 반복"이면 문장 길이와 구조를 다양하게 바꿔라.
-7. fixes에 있는 수정 지시는 하나도 빠뜨리지 말고 모두 반영하라.` : ''} 개선된 마크다운 본문만 출력.`;
+위 콘텐츠의 정보를 모두 유지하면서, 위 문체 원칙에 따라 개선하라.${customInstruction ? ` 특히 편집자의 추가 지시를 최우선으로 반영하라.` : ''} 개선된 마크다운 본문만 출력.`;
+    }
 
     const result = await generateWithRetry(prompt);
     let improvedContent = result.response.text();
