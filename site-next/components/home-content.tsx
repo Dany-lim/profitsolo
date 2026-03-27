@@ -60,6 +60,12 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
               >
                 케이스 스터디
               </Link>
+              <Link
+                href="/projects"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                우리가 만든 것들
+              </Link>
             </div>
 
             {/* Center Logo */}
@@ -116,6 +122,13 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                   className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
                 >
                   케이스 스터디
+                </Link>
+                <Link
+                  href="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                >
+                  우리가 만든 것들
                 </Link>
                 <Link
                   href="#join"
