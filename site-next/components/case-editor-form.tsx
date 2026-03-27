@@ -180,8 +180,8 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
           baronFeedback: validationReport ? {
             verdict: validationReport.verdict,
             fixes: validationReport.fixes,
-            redFlags: validationReport.redFlags,
-            bannedWords: validationReport.bannedWords,
+            redFlags: validationReport.redFlags.map(f => `[${f.severity}] ${f.name}: ${f.detail}`),
+            bannedWords: validationReport.bannedWords.map(bw => bw.word),
             baronComment: validationReport.baronComment,
           } : undefined,
         }),
