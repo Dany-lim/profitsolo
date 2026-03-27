@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 import { CaseStudy } from '@/types/case-study';
 import { CaseDetailContent } from '@/components/case-detail-content';
@@ -63,6 +64,8 @@ export default async function CaseDetailPage({ params, searchParams }: PageProps
   const { preview } = await searchParams;
   const study = await getStudy(id);
   const isPreview = preview === 'true';
+  const cookieStore = await cookies();
+  const isAdmin = cookieStore.get('admin-session')?.value === 'authenticated';
 
   if (!study || (!isPreview && study.published === false)) {
     notFound();
@@ -114,7 +117,7 @@ export default async function CaseDetailPage({ params, searchParams }: PageProps
       />
 
       {/* Navigation */}
-      <CaseDetailNav study={study} />
+      <CaseDetailNav study={study} isAdmin={isAdmin} />
 
       {/* Hero Section */}
       <div className="relative">

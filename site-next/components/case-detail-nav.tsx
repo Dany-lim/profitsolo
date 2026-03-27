@@ -5,9 +5,10 @@ import { CaseStudy } from '@/types/case-study';
 
 interface CaseDetailNavProps {
   study: CaseStudy;
+  isAdmin?: boolean;
 }
 
-export function CaseDetailNav({ study }: CaseDetailNavProps) {
+export function CaseDetailNav({ study, isAdmin }: CaseDetailNavProps) {
   return (
     <nav className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur-lg">
       <div className="mx-auto max-w-5xl px-4 py-2 sm:px-6 sm:py-4 lg:px-8">
@@ -31,12 +32,14 @@ export function CaseDetailNav({ study }: CaseDetailNavProps) {
             </svg>
             <span className="hidden sm:inline">Back to Index</span>
           </Link>
-          <Link
-            href={`/admin/${study.id}`}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 sm:px-4"
-          >
-            Edit
-          </Link>
+          {isAdmin && (
+            <Link
+              href={`/admin/${study.id}`}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 sm:px-4"
+            >
+              Edit
+            </Link>
+          )}
         </div>
       </div>
     </nav>
