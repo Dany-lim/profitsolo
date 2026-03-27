@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 - 새로운 섹션, 새로운 문단, 새로운 문장을 추가하지 마라.
 - 전체를 다시 쓰는 것은 절대 금지. 부분 수정만 허용.
 - 수정 후 전체 글자 수가 원문 대비 ±10% 이내여야 한다. 절대 크게 늘리지 마라.
-- 외부 링크([텍스트](URL))는 추가하지 마라. 링크는 이 단계의 역할이 아니다.
+- 바론이 외부 링크 부재를 지적한 경우, 본문에 언급된 서비스/도구의 공식 URL을 [서비스명](URL) 형식으로 첫 등장 시 추가하라. 확실히 아는 URL만 사용. 가짜 URL 금지.
 
 [수정할 때 반드시 지킬 문체 규칙]
 - 원문의 톤과 문체를 그대로 유지하라. 수정하는 부분도 주변 문장과 자연스럽게 어울려야 한다.
@@ -65,17 +65,11 @@ export async function POST(request: NextRequest) {
 [바론 판정]: ${baronFeedback.verdict}
 [바론 코멘트]: ${baronFeedback.baronComment || '없음'}
 
-${(() => {
-        const linkFilter = (s: string) => !/링크|link|URL|url|아웃바운드|outbound/i.test(s);
-        const filteredFixes = baronFeedback.fixes?.filter(linkFilter) || [];
-        return filteredFixes.length ? `[수정 지시 — 모두 반영할 것]\n${filteredFixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : '';
-      })()}
+${baronFeedback.fixes?.length ? `[수정 지시 — 모두 반영할 것]
+${baronFeedback.fixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : ''}
 
-${(() => {
-        const linkFilter = (s: string) => !/링크|link|URL|url|아웃바운드|outbound/i.test(s);
-        const filteredFlags = baronFeedback.redFlags?.filter(linkFilter) || [];
-        return filteredFlags.length ? `[Red Flags — 해당 부분만 수정]\n${filteredFlags.map((f: string) => `- ${f}`).join('\n')}` : '';
-      })()}
+${baronFeedback.redFlags?.length ? `[Red Flags — 해당 부분만 수정]
+${baronFeedback.redFlags.map((f: string) => `- ${f}`).join('\n')}` : ''}
 
 ${baronFeedback.bannedWords?.length ? `[금지어 — 삭제하거나 자연스러운 표현으로 대체]
 ${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
@@ -86,7 +80,7 @@ ${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
 - "동일한 문장 구조 반복" 지적 → 해당 구간의 문장 길이와 구조만 다양하게 변경
 - "과도한 형용사" 지적 → 해당 형용사만 삭제하거나 구체적 표현으로 대체
 - 금지어 → 해당 단어만 삭제하거나 자연스러운 다른 표현으로 대체
-- 외부 링크 관련 지적은 무시하라. 링크 추가는 이 단계에서 하지 않는다.
+- 외부 링크 지적 → 해당 서비스/도구의 첫 등장 위치에 [서비스명](공식URL) 추가. 확실히 아는 URL만. 가짜 URL 금지.
 
 ${customInstruction ? `[편집자 추가 지시]
 ${customInstruction}` : ''}
