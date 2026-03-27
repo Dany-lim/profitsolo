@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
     async function generateWithRetry(prompt: string) {
       for (const modelName of MODEL_PRIORITY) {
         try {
-          const m = genAI.getGenerativeModel({ model: modelName });
+          const m = genAI.getGenerativeModel({
+            model: modelName,
+            generationConfig: { temperature: 0 },
+          });
           const result = await m.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
           });
