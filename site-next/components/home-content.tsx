@@ -135,10 +135,10 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
           <div className="animate-hero text-center">
             <h1 className="mb-6 text-3xl font-bold leading-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-7xl">
-              조용히 세상을 지배하는
+              세상의 모든 아이디어,
               <br />
               <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
-                1인 기업 해부학
+                세상을 바꾸다
               </span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-base text-slate-600 sm:mb-12 sm:text-xl">
@@ -226,7 +226,7 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                 위대한 아이디어는 하늘에서 떨어지지 않습니다
               </h2>
               <p className="text-base font-semibold text-blue-600 sm:text-xl">
-                우리가 조용히 세상을 지배하는 '1인 기업'의 해부도를 추적하는 이유
+                우리가 세상을 바꾸는 아이디어를 추적하는 이유
               </p>
             </div>
 
