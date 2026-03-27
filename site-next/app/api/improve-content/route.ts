@@ -65,11 +65,17 @@ export async function POST(request: NextRequest) {
 [바론 판정]: ${baronFeedback.verdict}
 [바론 코멘트]: ${baronFeedback.baronComment || '없음'}
 
-${baronFeedback.fixes?.length ? `[수정 지시 — 모두 반영할 것]
-${baronFeedback.fixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : ''}
+${(() => {
+        const linkFilter = (s: string) => !/링크|link|URL|url|아웃바운드|outbound/i.test(s);
+        const filteredFixes = baronFeedback.fixes?.filter(linkFilter) || [];
+        return filteredFixes.length ? `[수정 지시 — 모두 반영할 것]\n${filteredFixes.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}` : '';
+      })()}
 
-${baronFeedback.redFlags?.length ? `[Red Flags — 해당 부분만 수정]
-${baronFeedback.redFlags.map((f: string) => `- ${f}`).join('\n')}` : ''}
+${(() => {
+        const linkFilter = (s: string) => !/링크|link|URL|url|아웃바운드|outbound/i.test(s);
+        const filteredFlags = baronFeedback.redFlags?.filter(linkFilter) || [];
+        return filteredFlags.length ? `[Red Flags — 해당 부분만 수정]\n${filteredFlags.map((f: string) => `- ${f}`).join('\n')}` : '';
+      })()}
 
 ${baronFeedback.bannedWords?.length ? `[금지어 — 삭제하거나 자연스러운 표현으로 대체]
 ${baronFeedback.bannedWords.map((w: string) => `- "${w}"`).join('\n')}` : ''}
