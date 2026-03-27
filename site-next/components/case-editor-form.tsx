@@ -214,7 +214,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         body: JSON.stringify({
           content: formData.content,
           title: formData.title,
-          category: formData.category || 'case-study',
+          category,
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
           sourceUrl: formData.sourceUrl || undefined,
           homepageUrl: formData.url || undefined,
@@ -307,7 +307,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         body: JSON.stringify({
           content: formData.content,
           title: formData.title,
-          category: formData.category || 'case-study',
+          category,
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
           sourceUrl: formData.sourceUrl || undefined,
           homepageUrl: formData.url || undefined,
