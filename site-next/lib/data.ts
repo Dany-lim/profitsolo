@@ -11,6 +11,7 @@ const mapCaseStudy = (item: any): CaseStudy => ({
   launchDate: item.launch_date,
   thumbnailImage: item.thumbnail_image,
   tags: item.tags || [],
+  category: item.category || 'case-study',
   metrics: item.metrics || [],
   executiveSummary: item.executive_summary || [],
   productPreview: item.product_preview || {},
@@ -42,10 +43,27 @@ export async function getPublishedCaseStudies(): Promise<CaseStudy[]> {
     .from('case_studies')
     .select('*')
     .eq('published', true)
+    .or('category.is.null,category.eq.case-study')
     .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching published case studies:', error.message);
+    return [];
+  }
+
+  return (data || []).map(mapCaseStudy);
+}
+
+export async function getPublishedIdeas(): Promise<CaseStudy[]> {
+  const { data, error } = await supabase
+    .from('case_studies')
+    .select('*')
+    .eq('published', true)
+    .eq('category', 'idea')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching published ideas:', error.message);
     return [];
   }
 

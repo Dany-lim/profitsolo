@@ -93,18 +93,8 @@ ${transcript}
  */
 export const DEFAULT_CHANNELS = [
   {
-    id: 'UCGsBRXfOV7_gfOo5IHTqfOw',
+    id: 'UChhw6DlKKTQ9mYSpTfXUYqA',
     name: 'Starter Story',
     url: 'https://www.youtube.com/@StarterStory',
-  },
-  {
-    id: 'UC9cn0TuPq4dnbTY-CBsm8sg',
-    name: 'My First Million',
-    url: 'https://www.youtube.com/@MyFirstMillionPod',
-  },
-  {
-    id: 'UCwHm4XKVqaGAPZwosfgKgGQ',
-    name: 'Greg Isenberg',
-    url: 'https://www.youtube.com/@GregIsenberg',
   },
 ];

@@ -61,6 +61,12 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                 케이스 스터디
               </Link>
               <Link
+                href="/ideas"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                아이디어모음
+              </Link>
+              <Link
                 href="/projects"
                 className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
               >
@@ -122,6 +128,13 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
                   className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
                 >
                   케이스 스터디
+                </Link>
+                <Link
+                  href="/ideas"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                >
+                  아이디어모음
                 </Link>
                 <Link
                   href="/projects"

@@ -15,15 +15,20 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
   const [toggling, setToggling] = useState<string | null>(null);
   const [enrichedModal, setEnrichedModal] = useState<{ title: string; content: string } | null>(null);
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'case-study' | 'idea'>('all');
 
   const filteredStudies = studies.filter((study) => {
-    if (filter === 'published') return study.published !== false;
-    if (filter === 'draft') return study.published === false;
+    if (filter === 'published' && study.published === false) return false;
+    if (filter === 'draft' && study.published !== false) return false;
+    if (categoryFilter === 'case-study' && study.category === 'idea') return false;
+    if (categoryFilter === 'idea' && study.category !== 'idea') return false;
     return true;
   });
 
   const publishedCount = studies.filter(s => s.published !== false).length;
   const draftCount = studies.filter(s => s.published === false).length;
+  const caseCount = studies.filter(s => s.category !== 'idea').length;
+  const ideaCount = studies.filter(s => s.category === 'idea').length;
 
   const handleTogglePublish = async (id: string) => {
     setToggling(id);
@@ -81,7 +86,41 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
 
   return (
     <div className="space-y-4">
-      {/* Filter Tabs */}
+      {/* Category Filter */}
+      <div className="flex gap-2 rounded-lg bg-blue-50 p-1">
+        <button
+          onClick={() => setCategoryFilter('all')}
+          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-all ${
+            categoryFilter === 'all'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          전체 ({studies.length})
+        </button>
+        <button
+          onClick={() => setCategoryFilter('case-study')}
+          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-all ${
+            categoryFilter === 'case-study'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          케이스 ({caseCount})
+        </button>
+        <button
+          onClick={() => setCategoryFilter('idea')}
+          className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-all ${
+            categoryFilter === 'idea'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          아이디어 ({ideaCount})
+        </button>
+      </div>
+
+      {/* Status Filter */}
       <div className="flex gap-2 rounded-lg bg-slate-100 p-1">
         <button
           onClick={() => setFilter('all')}
@@ -91,7 +130,7 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          전체 ({studies.length})
+          전체
         </button>
         <button
           onClick={() => setFilter('published')}
@@ -134,6 +173,13 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
                     : 'bg-green-100 text-green-600'
                 }`}>
                   {study.published === false ? '미발행' : '발행'}
+                </span>
+                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                  study.category === 'idea'
+                    ? 'bg-purple-100 text-purple-600'
+                    : 'bg-blue-100 text-blue-600'
+                }`}>
+                  {study.category === 'idea' ? '아이디어' : '케이스'}
                 </span>
                 <span className="text-xs font-mono text-slate-400">ID: {study.id}</span>
                 {study.tags.map(tag => (
@@ -179,7 +225,7 @@ export function AdminCaseList({ initialStudies }: AdminCaseListProps) {
                 편집
               </a>
               <a
-                href={`/case/${study.id}?preview=true`}
+                href={`/${study.category === 'idea' ? 'ideas' : 'case'}/${study.id}?preview=true`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"

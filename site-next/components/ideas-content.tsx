@@ -1,0 +1,179 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { CaseStudy } from '@/types/case-study';
+
+interface IdeasContentProps {
+  ideas: CaseStudy[];
+}
+
+export function IdeasContent({ ideas }: IdeasContentProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const filteredIdeas = useMemo(() => {
+    if (!searchQuery) return ideas;
+    const q = searchQuery.toLowerCase();
+    return ideas.filter(
+      (idea) =>
+        idea.title.toLowerCase().includes(q) ||
+        idea.tags.some((tag) => tag.toLowerCase().includes(q))
+    );
+  }, [ideas, searchQuery]);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-4 md:grid md:grid-cols-3">
+            <div className="hidden gap-6 md:flex">
+              <Link
+                href="/"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                케이스 스터디
+              </Link>
+              <Link
+                href="/ideas"
+                className="text-sm font-medium text-blue-600"
+              >
+                아이디어모음
+              </Link>
+              <Link
+                href="/projects"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+              >
+                우리가 만든 것들
+              </Link>
+            </div>
+
+            <div className="text-center md:col-start-2">
+              <Link href="/">
+                <span className="bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
+                  Startup Radar
+                </span>
+              </Link>
+            </div>
+
+            <div className="hidden items-center justify-end md:flex">
+              <Link
+                href="#newsletter"
+                className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              >
+                뉴스레터 구독
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="rounded-lg p-2 text-slate-700 hover:bg-slate-100 md:hidden"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                )}
+              </svg>
+            </button>
+          </div>
+
+          {/* Mobile menu */}
+          {mobileMenuOpen && (
+            <div className="border-t border-slate-200 py-4 md:hidden">
+              <div className="flex flex-col gap-3">
+                <Link href="/" className="text-sm font-medium text-slate-700">케이스 스터디</Link>
+                <Link href="/ideas" className="text-sm font-medium text-blue-600">아이디어모음</Link>
+                <Link href="/projects" className="text-sm font-medium text-slate-700">우리가 만든 것들</Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="border-b border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="mb-4 text-3xl font-bold text-slate-900 sm:text-5xl">
+            아이디어모음
+          </h1>
+          <p className="mb-8 text-base text-slate-600 sm:text-lg">
+            수익화 아이디어, 마케팅 전략, 자동화 노하우를 모았습니다
+          </p>
+
+          {/* Search */}
+          <div className="mx-auto max-w-xl">
+            <div className="relative">
+              <svg className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="아이디어 검색..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-slate-300 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ideas List */}
+      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+        {filteredIdeas.length === 0 ? (
+          <p className="text-center text-slate-500">
+            {searchQuery ? '검색 결과가 없습니다.' : '아직 게시된 아이디어가 없습니다.'}
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {filteredIdeas.map((idea, index) => (
+              <Link key={idea.id} href={`/ideas/${idea.id}`}>
+                <article
+                  className="animate-fade-in-up group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-blue-200 hover:shadow-md sm:p-8"
+                  style={{ animationDelay: `${index * 0.08}s` }}
+                >
+                  {/* Tags */}
+                  {idea.tags.length > 0 && (
+                    <div className="mb-3 flex flex-wrap gap-1.5">
+                      {idea.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <h2 className="mb-2 text-lg font-bold text-slate-900 transition-colors group-hover:text-blue-600 sm:text-xl">
+                    {idea.title}
+                  </h2>
+
+                  {/* Content Preview */}
+                  <p className="line-clamp-2 text-sm leading-relaxed text-slate-600 sm:text-base">
+                    {idea.content
+                      .replace(/#{1,6}\s/g, '')
+                      .replace(/\*\*/g, '')
+                      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+                      .substring(0, 200)}
+                  </p>
+                </article>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 sm:px-6">
+        <p>Startup Radar - 1인 창업의 모든 것</p>
+      </footer>
+    </div>
+  );
+}

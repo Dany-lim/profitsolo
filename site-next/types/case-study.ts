@@ -37,6 +37,7 @@ export interface CaseStudy {
   launchDate: string;
   thumbnailImage: string;
   tags: string[];
+  category?: 'case-study' | 'idea';
   metrics?: Metric[];
   executiveSummary?: string[];
   productPreview?: ProductPreview;

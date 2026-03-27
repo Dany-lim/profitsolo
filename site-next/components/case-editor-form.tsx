@@ -52,6 +52,8 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [customInstruction, setCustomInstruction] = useState('');
   const [lastValidatedContent, setLastValidatedContent] = useState<string>('');
+  const [category, setCategory] = useState<'case-study' | 'idea'>(study.category || 'case-study');
+  const isIdea = category === 'idea';
   const [formData, setFormData] = useState({
     title: study.title,
     launchDate: study.launchDate,
@@ -212,6 +214,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         body: JSON.stringify({
           content: formData.content,
           title: formData.title,
+          category: formData.category || 'case-study',
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
           sourceUrl: formData.sourceUrl || undefined,
           homepageUrl: formData.url || undefined,
@@ -304,6 +307,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         body: JSON.stringify({
           content: formData.content,
           title: formData.title,
+          category: formData.category || 'case-study',
           context: `MRR: ${formData.mrr}, 런칭: ${formData.launchDate}, 태그: ${formData.tags}`,
           sourceUrl: formData.sourceUrl || undefined,
           homepageUrl: formData.url || undefined,
@@ -461,6 +465,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         thumbnailImage: formData.thumbnailImage,
         content: formData.content,
         tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
+        category,
         productPreview: study.productPreview ? {
           ...study.productPreview,
           localImage: formData.productPreviewImage || study.productPreview.localImage,
@@ -499,10 +504,10 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-50">
-            {isNew ? '새 케이스 스터디 추가' : '케이스 스터디 편집'}
+            {isNew ? (isIdea ? '새 아이디어 추가' : '새 케이스 스터디 추가') : (isIdea ? '아이디어 편집' : '케이스 스터디 편집')}
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            {isNew ? '새로운 케이스를 추가합니다' : `${study.id} 편집 중`}
+            {isNew ? (isIdea ? '새로운 아이디어를 추가합니다' : '새로운 케이스를 추가합니다') : `${study.id} 편집 중`}
           </p>
         </div>
         <div className="flex gap-3">
@@ -518,6 +523,35 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
       </div>
 
       <div className="space-y-8">
+        {/* Category Selector */}
+        <div className="space-y-2">
+          <Label className="text-base font-semibold">카테고리</Label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setCategory('case-study')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                !isIdea
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              케이스 스터디
+            </button>
+            <button
+              type="button"
+              onClick={() => setCategory('idea')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                isIdea
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              아이디어
+            </button>
+          </div>
+        </div>
+
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title" className="text-base font-semibold">
@@ -527,36 +561,38 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             id="title"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="케이스 스터디 제목"
+            placeholder={isIdea ? '아이디어 제목' : '케이스 스터디 제목'}
             className="text-lg"
           />
         </div>
 
-        {/* Launch Date & MRR */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="launchDate" className="text-base font-semibold">
-              런칭 날짜
-            </Label>
-            <Input
-              id="launchDate"
-              value={formData.launchDate}
-              onChange={(e) => setFormData({ ...formData, launchDate: e.target.value })}
-              placeholder="2014년"
-            />
+        {/* Launch Date & MRR (case-study only) */}
+        {!isIdea && (
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="launchDate" className="text-base font-semibold">
+                런칭 날짜
+              </Label>
+              <Input
+                id="launchDate"
+                value={formData.launchDate}
+                onChange={(e) => setFormData({ ...formData, launchDate: e.target.value })}
+                placeholder="2014년"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mrr" className="text-base font-semibold">
+                MRR
+              </Label>
+              <Input
+                id="mrr"
+                value={formData.mrr}
+                onChange={(e) => setFormData({ ...formData, mrr: e.target.value })}
+                placeholder="월 800만원"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="mrr" className="text-base font-semibold">
-              MRR
-            </Label>
-            <Input
-              id="mrr"
-              value={formData.mrr}
-              onChange={(e) => setFormData({ ...formData, mrr: e.target.value })}
-              placeholder="월 800만원"
-            />
-          </div>
-        </div>
+        )}
 
         {/* URL & Source */}
         <div className="grid gap-6 md:grid-cols-2">

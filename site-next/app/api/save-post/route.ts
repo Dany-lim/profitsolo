@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
       published: updatedPost.published ?? false,
       seo: updatedPost.seo,
       content: updatedPost.content,
+      category: updatedPost.category || 'case-study',
     };
 
     // Try saving with all fields first
