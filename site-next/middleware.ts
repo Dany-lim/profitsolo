@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   // Skip login page and login API
   if (pathname === '/admin/login' || pathname === '/api/admin/login') {
@@ -12,6 +12,13 @@ export function middleware(request: NextRequest) {
 
   // Protect admin pages
   if (pathname.startsWith('/admin')) {
+    if (!session || session.value !== 'authenticated') {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
+
+  // Protect preview pages (require admin session)
+  if (searchParams.get('preview') === 'true') {
     if (!session || session.value !== 'authenticated') {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
@@ -28,5 +35,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/save-post', '/api/delete-post', '/api/toggle-publish', '/api/validate-content'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/save-post', '/api/delete-post', '/api/toggle-publish', '/api/validate-content', '/ideas/:path*', '/case/:path*'],
 };
