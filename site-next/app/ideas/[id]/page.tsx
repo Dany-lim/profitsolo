@@ -86,10 +86,10 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Preview Banner */}
       {isPreview && (
-        <div className="sticky top-0 z-50 bg-orange-500 px-4 py-2 text-center text-sm font-medium text-white">
+        <div className="sticky top-0 z-50 bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-center text-sm font-medium text-white shadow-sm">
           미리보기 모드 — 이 글은 아직 발행되지 않았습니다
         </div>
       )}
@@ -101,14 +101,14 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
       />
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <nav className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur-xl">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <Link
               href="/ideas"
-              className="flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+              className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 transition-all hover:bg-slate-100 hover:text-blue-600"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
               아이디어모음
@@ -123,14 +123,14 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
       </nav>
 
       {/* Article */}
-      <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+      <article className="mx-auto max-w-3xl px-4 pt-8 pb-6 sm:px-6 sm:pt-14 sm:pb-10 lg:px-8">
         {/* Tags */}
         {idea.tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-5 flex flex-wrap gap-2">
             {idea.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-md bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600"
+                className="rounded-full bg-blue-50 px-3.5 py-1 text-xs font-semibold tracking-wide text-blue-600"
               >
                 {tag}
               </span>
@@ -139,20 +139,21 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
         )}
 
         {/* Title */}
-        <h1 className="mb-8 text-2xl font-bold leading-tight text-slate-900 sm:text-4xl">
+        <h1 className="mb-10 text-2xl font-extrabold leading-snug tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
           {idea.title}
         </h1>
 
         {/* Content */}
         <div
           className="prose prose-base prose-slate max-w-none sm:prose-lg
-            prose-headings:font-bold
-            prose-h2:text-xl prose-h2:text-blue-600 sm:prose-h2:text-2xl
-            prose-h3:text-lg prose-h3:text-blue-500 sm:prose-h3:text-xl
-            prose-p:text-slate-700 prose-p:leading-relaxed
-            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-            prose-strong:font-semibold prose-strong:text-orange-600
-            prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-50 prose-blockquote:py-2 prose-blockquote:not-italic"
+            prose-headings:font-extrabold prose-headings:tracking-tight
+            prose-h2:mt-10 prose-h2:mb-4 prose-h2:text-xl prose-h2:text-slate-900 sm:prose-h2:text-2xl
+            prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-lg prose-h3:text-slate-800 sm:prose-h3:text-xl
+            prose-p:text-slate-600 prose-p:leading-[1.8]
+            prose-a:text-blue-600 prose-a:underline prose-a:decoration-blue-200 prose-a:underline-offset-2 hover:prose-a:decoration-blue-500
+            prose-strong:font-semibold prose-strong:text-slate-900
+            prose-blockquote:border-l-blue-500 prose-blockquote:bg-blue-50/50 prose-blockquote:py-1 prose-blockquote:not-italic prose-blockquote:text-slate-600
+            prose-li:text-slate-600 prose-li:marker:text-blue-400"
         >
           <ReactMarkdown
             components={{
@@ -185,11 +186,11 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
 
         {/* Product Preview */}
         {(idea.productPreview?.steps?.length ?? 0) > 0 && idea.productPreview && (
-          <section className="mt-10 overflow-hidden rounded-2xl bg-slate-900 shadow-xl">
-            <div className="p-5 sm:p-8">
+          <section className="mt-12 overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
+            <div className="p-6 sm:p-8">
               {idea.productPreview.localImage && (
                 <div className="mb-6 flex justify-center">
-                  <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl">
+                  <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10">
                     <img
                       src={idea.productPreview.localImage}
                       alt={idea.productPreview.title}
@@ -198,20 +199,27 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
                   </div>
                 </div>
               )}
-              <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">
-                {idea.productPreview.title}
-              </h2>
-              <div className="space-y-5">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20">
+                  <svg className="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-bold text-white sm:text-xl">
+                  {idea.productPreview.title}
+                </h2>
+              </div>
+              <div className="space-y-3">
                 {idea.productPreview.steps.map((step: any, index: number) => (
-                  <div key={index} className="flex gap-4">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-slate-900">
+                  <div key={index} className="flex gap-4 rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-xs font-bold text-slate-900">
                       {index + 1}
                     </span>
                     <div>
-                      <h3 className="mb-1 font-semibold text-amber-400">
+                      <h3 className="mb-0.5 text-sm font-semibold text-amber-300">
                         {step.label}
                       </h3>
-                      <p className="text-sm leading-relaxed text-slate-300">
+                      <p className="text-sm leading-relaxed text-slate-400">
                         {step.desc}
                       </p>
                     </div>
@@ -224,16 +232,21 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
 
         {/* Source link */}
         {idea.sourceUrl && (
-          <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-            <span className="font-medium">출처:</span>{' '}
-            <a
-              href={idea.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {idea.sourceTitle || idea.sourceUrl}
-            </a>
+          <div className="mt-10 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-500">
+            <svg className="h-4 w-4 flex-shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m9.686-5.747 4.5-4.5a4.5 4.5 0 0 1 6.364 6.364l-1.757 1.757" />
+            </svg>
+            <span>
+              <span className="font-medium text-slate-600">출처:</span>{' '}
+              <a
+                href={idea.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline decoration-blue-200 underline-offset-2 hover:decoration-blue-500"
+              >
+                {idea.sourceTitle || idea.sourceUrl}
+              </a>
+            </span>
           </div>
         )}
       </article>
@@ -242,9 +255,9 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
       <div className="mx-auto max-w-3xl px-4 pb-16 sm:px-6 lg:px-8">
         <Link
           href="/ideas"
-          className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-slate-100 hover:text-blue-600"
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
           다른 아이디어 보기
