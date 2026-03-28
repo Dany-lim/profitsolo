@@ -183,6 +183,45 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
           </ReactMarkdown>
         </div>
 
+        {/* Product Preview */}
+        {idea.productPreview?.steps?.length > 0 && (
+          <section className="mt-10 overflow-hidden rounded-2xl bg-slate-900 shadow-xl">
+            <div className="p-5 sm:p-8">
+              {idea.productPreview.localImage && (
+                <div className="mb-6 flex justify-center">
+                  <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl">
+                    <img
+                      src={idea.productPreview.localImage}
+                      alt={idea.productPreview.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+              <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">
+                {idea.productPreview.title}
+              </h2>
+              <div className="space-y-5">
+                {idea.productPreview.steps.map((step: any, index: number) => (
+                  <div key={index} className="flex gap-4">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-slate-900">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <h3 className="mb-1 font-semibold text-amber-400">
+                        {step.label}
+                      </h3>
+                      <p className="text-sm leading-relaxed text-slate-300">
+                        {step.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Source link */}
         {idea.sourceUrl && (
           <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">

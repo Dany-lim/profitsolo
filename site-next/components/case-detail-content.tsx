@@ -63,24 +63,26 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
       )}
 
       {/* Product Preview */}
-      {study.productPreview && (
+      {study.productPreview?.steps?.length > 0 && (
         <section
           className="animate-fade-in-up overflow-hidden rounded-2xl bg-slate-900 shadow-xl"
           style={{ animationDelay: '0.4s' }}
         >
           <div className="grid items-center md:grid-cols-2">
             {/* Left: Product Image */}
-            <div className="relative flex items-center justify-center bg-slate-800/50 p-4 sm:p-8 md:p-12">
-              <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl">
-                <Image
-                  src={study.productPreview.localImage}
-                  alt={study.productPreview.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+            {study.productPreview.localImage ? (
+              <div className="relative flex items-center justify-center bg-slate-800/50 p-4 sm:p-8 md:p-12">
+                <div className="relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl shadow-2xl">
+                  <Image
+                    src={study.productPreview.localImage}
+                    alt={study.productPreview.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
             {/* Right: Features */}
             <div className="p-5 sm:p-8 md:p-12">
               <h2 className="mb-4 text-xl font-bold text-white sm:mb-8 sm:text-2xl">
