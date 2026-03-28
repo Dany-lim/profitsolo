@@ -314,9 +314,10 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
       <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-sm text-slate-500">
-              © 2026 Startup Radar. All rights reserved.
-            </p>
+            <Link href="/admin" className="text-sm text-slate-400 transition-colors hover:text-slate-600">
+              © 2026 Startup Radar
+            </Link>
+            <span className="text-sm text-slate-500">. All rights reserved.</span>
           </div>
         </div>
       </footer>

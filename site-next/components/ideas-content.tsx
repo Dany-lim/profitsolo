@@ -194,7 +194,8 @@ export function IdeasContent({ ideas }: IdeasContentProps) {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 sm:px-6">
-        <p>Startup Radar - 1인 창업의 모든 것</p>
+        <Link href="/admin" className="text-slate-400 transition-colors hover:text-slate-600">Startup Radar</Link>
+        <span> - 1인 창업의 모든 것</span>
       </footer>
     </div>
   );
