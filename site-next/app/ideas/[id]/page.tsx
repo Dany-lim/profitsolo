@@ -184,7 +184,7 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
         </div>
 
         {/* Product Preview */}
-        {idea.productPreview?.steps?.length > 0 && (
+        {(idea.productPreview?.steps?.length ?? 0) > 0 && idea.productPreview && (
           <section className="mt-10 overflow-hidden rounded-2xl bg-slate-900 shadow-xl">
             <div className="p-5 sm:p-8">
               {idea.productPreview.localImage && (

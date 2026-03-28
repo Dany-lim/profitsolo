@@ -63,7 +63,7 @@ export function CaseDetailContent({ study }: CaseDetailContentProps) {
       )}
 
       {/* Product Preview */}
-      {study.productPreview?.steps?.length > 0 && (
+      {(study.productPreview?.steps?.length ?? 0) > 0 && study.productPreview && (
         <section
           className="animate-fade-in-up overflow-hidden rounded-2xl bg-slate-900 shadow-xl"
           style={{ animationDelay: '0.4s' }}
