@@ -983,6 +983,24 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             </div>
           )}
 
+          <div className="flex items-center gap-2 mb-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEditorMode(editorMode === 'editor' ? 'text' : 'editor')}
+            >
+              {editorMode === 'editor' ? '텍스트 모드' : '에디터 모드'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleClipboardPaste}
+            >
+              붙여넣기
+            </Button>
+          </div>
           {editorMode === 'editor' ? (
             <div className="border-2 rounded-lg overflow-hidden text-lg" data-color-mode="light">
               <MarkdownEditor
@@ -1001,24 +1019,6 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
               placeholder="마크다운 본문을 입력하세요. Ctrl+V로 원하는 위치에 붙여넣기 가능합니다."
             />
           )}
-          <div className="flex items-center gap-2 mt-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setEditorMode(editorMode === 'editor' ? 'text' : 'editor')}
-            >
-              {editorMode === 'editor' ? '텍스트 모드' : '에디터 모드'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleClipboardPaste}
-            >
-              붙여넣기
-            </Button>
-          </div>
         </div>
 
         {/* Baron Validation */}
