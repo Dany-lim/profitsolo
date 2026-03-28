@@ -43,7 +43,9 @@ export async function POST(request: NextRequest) {
 
     if (baronFeedback) {
       // 바론 피드백 기반 수정 — 지적사항만 고치고 나머지는 보존
-      prompt = `당신은 편집 교정자입니다. 아래 콘텐츠에서 검증 에이전트 "바론"이 지적한 부분만 정확히 수정하세요.
+      prompt = `[언어 규칙] 반드시 한국어로만 응답하라. 한국어 외 언어(영어, 중국어, 일본어 등)로 응답하면 불합격이다. 설명, 인사말, 메타 코멘트 없이 수정된 마크다운 본문만 출력하라.
+
+당신은 편집 교정자입니다. 아래 콘텐츠에서 검증 에이전트 "바론"이 지적한 부분만 정확히 수정하세요.
 
 [핵심 원칙 — 반드시 준수]
 - 바론이 지적한 부분만 고쳐라. 나머지 문장, 단락, 구조, 표현은 한 글자도 바꾸지 마라.
@@ -94,7 +96,9 @@ ${content}
 
     } else if (category === 'idea' && content.includes('### ')) {
       // 스토리형 개선 — 3인칭 정보 요약형 스토리텔링, 구조 보존
-      prompt = `당신은 온라인 수익화 블로그 편집자입니다. 아래 스토리형 블로그 포스트의 문장을 더 매끄럽고 읽기 쉽게 다듬으세요.
+      prompt = `[언어 규칙] 반드시 한국어로만 응답하라. 한국어 외 언어(영어, 중국어, 일본어 등)로 응답하면 불합격이다. 설명, 인사말, 메타 코멘트 없이 개선된 마크다운 본문만 출력하라.
+
+당신은 온라인 수익화 블로그 편집자입니다. 아래 스토리형 블로그 포스트의 문장을 더 매끄럽고 읽기 쉽게 다듬으세요.
 
 [핵심 원칙]
 - 원문의 구조(### 소제목, 문단 순서, 마무리 불릿)를 그대로 유지하라.
@@ -135,7 +139,9 @@ ${content}
 
     } else if (category === 'idea') {
       // 아이디어 포스트 개선 — 1인칭 경험담, 원문 분량 유지
-      prompt = `당신은 온라인 수익화 블로그 편집자입니다. 아래 블로그 포스트의 문장을 더 매끄럽고 읽기 쉽게 다듬으세요.
+      prompt = `[언어 규칙] 반드시 한국어로만 응답하라. 한국어 외 언어(영어, 중국어, 일본어 등)로 응답하면 불합격이다. 설명, 인사말, 메타 코멘트 없이 개선된 마크다운 본문만 출력하라.
+
+당신은 온라인 수익화 블로그 편집자입니다. 아래 블로그 포스트의 문장을 더 매끄럽고 읽기 쉽게 다듬으세요.
 
 [핵심 원칙]
 - 원문의 구조(소제목, 문단 순서)를 그대로 유지하라.
@@ -175,7 +181,9 @@ ${content}
 
     } else {
       // 케이스 스터디 개선 — 전체 리라이팅
-      prompt = `당신은 논픽션 스토리텔러입니다. 아래 콘텐츠를 영화처럼 몰입감 있는 창업 스토리로 개선하세요.
+      prompt = `[언어 규칙] 반드시 한국어로만 응답하라. 한국어 외 언어(영어, 중국어, 일본어 등)로 응답하면 불합격이다. 설명, 인사말, 메타 코멘트 없이 개선된 마크다운 본문만 출력하라.
+
+당신은 논픽션 스토리텔러입니다. 아래 콘텐츠를 영화처럼 몰입감 있는 창업 스토리로 개선하세요.
 
 [문체 & 톤]
 - 소설처럼 써라. 원문에 장소와 시기가 있으면 장면 묘사로 시작하라. 없으면 억지로 지어내지 마라.
@@ -225,6 +233,21 @@ ${content}
 
     const result = await generateWithRetry(prompt);
     let improvedContent = result.response.text();
+
+    // 비한국어 프리앰블 제거 (중국어, 영어 메타 코멘트 등)
+    // 첫 한국어 문자 또는 마크다운 헤딩(#) 이전의 비한국어 텍스트를 제거
+    const koreanOrHeadingMatch = improvedContent.match(/^[\s\S]*?(?=[가-힣#])/);
+    if (koreanOrHeadingMatch && koreanOrHeadingMatch[0].length > 0) {
+      const preamble = koreanOrHeadingMatch[0];
+      // 프리앰블에 한국어가 없고 비한국어 문자(중국어, 영어 등)가 있으면 제거
+      if (!/[가-힣]/.test(preamble) && /[\u4e00-\u9fff]|^[a-zA-Z]/.test(preamble)) {
+        improvedContent = improvedContent.substring(preamble.length);
+        console.warn('[improve-content] WARNING: Removed non-Korean preamble');
+      }
+    }
+
+    // 비정상 URL 제거 (200자 이상 URL은 가짜로 간주)
+    improvedContent = improvedContent.replace(/\[([^\]]*)\]\((https?:\/\/[^)]{200,})\)/g, '$1');
 
     // 표(table) 제거: 파이프 기호가 포함된 라인을 모두 제거
     const lines = improvedContent.split('\n');
