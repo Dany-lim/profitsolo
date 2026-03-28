@@ -19,6 +19,7 @@ const IDEA_CHANNELS = [
   { id: 'UCEIySKPDQjeQD6NVHzN6oqA', name: 'Eddie Eizner' },
   { id: 'UCxiI1Gr_bfs_N0fWoDw2yAg', name: 'Molly Keyser' },
   { id: 'UCX_QAfWDjx45p3H2srYAEqg', name: 'Wealth Wisdom' },
+  { id: 'UCVBNyvcHbffDw61L4sikLtQ', name: 'Steven Cravotta' },
 ];
 
 const APPROVED_TAGS = [
