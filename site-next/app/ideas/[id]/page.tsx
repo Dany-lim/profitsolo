@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
 import { CaseStudy } from '@/types/case-study';
 import { getCaseStudyById, getPublishedIdeas } from '@/lib/data';
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       type: 'article',
+      ...(idea.thumbnailImage && { images: [{ url: idea.thumbnailImage }] }),
     },
     alternates: {
       canonical: `/ideas/${id}`,
@@ -139,9 +141,23 @@ export default async function IdeaDetailPage({ params, searchParams }: PageProps
         )}
 
         {/* Title */}
-        <h1 className="mb-10 text-2xl font-extrabold leading-snug tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
+        <h1 className="mb-8 text-2xl font-extrabold leading-snug tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
           {idea.title}
         </h1>
+
+        {/* Thumbnail */}
+        {idea.thumbnailImage && (
+          <div className="relative mb-10 overflow-hidden rounded-2xl">
+            <Image
+              src={idea.thumbnailImage}
+              alt={idea.title}
+              width={800}
+              height={450}
+              className="w-full object-cover"
+              priority
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div
