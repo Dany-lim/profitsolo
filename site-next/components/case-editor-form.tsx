@@ -51,6 +51,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
   const [preImproveReport, setPreImproveReport] = useState<ValidationReport | null>(null);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [customInstruction, setCustomInstruction] = useState('');
+  const [editorMode, setEditorMode] = useState<'editor' | 'text'>('editor');
   const [lastValidatedContent, setLastValidatedContent] = useState<string>('');
   const [category, setCategory] = useState<'case-study' | 'idea'>(study.category || 'case-study');
   const isIdea = category === 'idea';
@@ -733,19 +734,10 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={async () => {
-                  try {
-                    const text = await navigator.clipboard.readText();
-                    if (text) {
-                      setFormData((prev) => ({ ...prev, content: prev.content ? prev.content + '\n\n' + text : text }));
-                    }
-                  } catch {
-                    alert('클립보드 접근 권한이 필요합니다.');
-                  }
-                }}
+                onClick={() => setEditorMode(editorMode === 'editor' ? 'text' : 'editor')}
                 className="gap-1.5"
               >
-                클립보드 붙여넣기
+                {editorMode === 'editor' ? '텍스트 모드' : '에디터 모드'}
               </Button>
               <Button
                 type="button"
@@ -975,13 +967,23 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             </div>
           )}
 
-          <div className="border-2 rounded-lg overflow-hidden text-lg" data-color-mode="light">
-            <MarkdownEditor
+          {editorMode === 'editor' ? (
+            <div className="border-2 rounded-lg overflow-hidden text-lg" data-color-mode="light">
+              <MarkdownEditor
+                value={formData.content}
+                onChange={(value) => setFormData({ ...formData, content: value })}
+                height="600px"
+              />
+            </div>
+          ) : (
+            <textarea
               value={formData.content}
-              onChange={(value) => setFormData({ ...formData, content: value })}
-              height="600px"
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              className="w-full rounded-lg border-2 border-slate-200 bg-white p-4 font-mono text-sm leading-relaxed text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              rows={30}
+              placeholder="마크다운 본문을 입력하세요. Ctrl+V로 원하는 위치에 붙여넣기 가능합니다."
             />
-          </div>
+          )}
         </div>
 
         {/* Baron Validation */}
