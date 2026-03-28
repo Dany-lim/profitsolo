@@ -18,6 +18,7 @@ const IDEA_CHANNELS = [
   { id: 'UCzOAAJUiSO2uyu1xyxw__2Q', name: 'Nick Loper' },
   { id: 'UCEIySKPDQjeQD6NVHzN6oqA', name: 'Eddie Eizner' },
   { id: 'UCxiI1Gr_bfs_N0fWoDw2yAg', name: 'Molly Keyser' },
+  { id: 'UCX_QAfWDjx45p3H2srYAEqg', name: 'Wealth Wisdom' },
 ];
 
 const APPROVED_TAGS = [
