@@ -2,14 +2,16 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { CaseStudy } from '@/types/case-study';
 import { CaseStudyCard } from '@/components/case-study-card';
 
 interface HomeContentProps {
   initialStudies: CaseStudy[];
+  initialIdeas: CaseStudy[];
 }
 
-export function HomeContent({ initialStudies }: HomeContentProps) {
+export function HomeContent({ initialStudies, initialIdeas }: HomeContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState('All');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -241,6 +243,72 @@ export function HomeContent({ initialStudies }: HomeContentProps) {
           </div>
         )}
       </section>
+
+      {/* Ideas Section */}
+      {initialIdeas.length > 0 && (
+        <section className="border-t border-slate-100 bg-slate-50">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">아이디어 모음</h2>
+                <p className="mt-1 text-slate-600">{initialIdeas.length}개의 아이디어</p>
+              </div>
+              <Link
+                href="/ideas"
+                className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-800"
+              >
+                전체 보기 →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {initialIdeas.slice(0, 8).map((idea, index) => (
+                <Link key={idea.id} href={`/ideas/${idea.id}`}>
+                  <article
+                    className="animate-fade-in-up group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:border-blue-200 hover:shadow-lg"
+                    style={{ animationDelay: `${index * 0.06}s` }}
+                  >
+                    {idea.thumbnailImage ? (
+                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+                        <Image
+                          src={idea.thumbnailImage}
+                          alt={idea.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex aspect-[16/9] w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
+                        <svg className="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col p-4 sm:p-5">
+                      {idea.tags.length > 0 && (
+                        <div className="mb-2.5 flex flex-wrap gap-1.5">
+                          {idea.tags.slice(0, 2).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <h3 className="line-clamp-2 text-base font-bold leading-snug text-slate-900 transition-colors group-hover:text-blue-600 sm:text-lg">
+                        {idea.title}
+                      </h3>
+                    </div>
+                  </article>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* About Section */}
       <section id="about" className="border-t border-slate-100 bg-slate-50">

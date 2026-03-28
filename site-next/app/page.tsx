@@ -1,6 +1,6 @@
 import { CaseStudy } from '@/types/case-study';
 import { HomeContent } from '@/components/home-content';
-import { getPublishedCaseStudies } from '@/lib/data';
+import { getPublishedCaseStudies, getPublishedIdeas } from '@/lib/data';
 
 // 데이터베이스 업데이트 시 즉각 반영을 위해 ISR 대신 적절한 재검증 주기 설정 (또는 실시간을 원하면 0)
 export const dynamic = 'force-dynamic';
@@ -8,7 +8,10 @@ export const dynamic = 'force-dynamic';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://profitsolo.net';
 
 export default async function Home() {
-  const studies = await getPublishedCaseStudies();
+  const [studies, ideas] = await Promise.all([
+    getPublishedCaseStudies(),
+    getPublishedIdeas(),
+  ]);
 
 
   const jsonLd = {
@@ -26,7 +29,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomeContent initialStudies={studies} />
+      <HomeContent initialStudies={studies} initialIdeas={ideas} />
     </>
   );
 }
