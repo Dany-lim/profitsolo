@@ -733,6 +733,24 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
                 type="button"
                 variant="outline"
                 size="sm"
+                onClick={async () => {
+                  try {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                      setFormData((prev) => ({ ...prev, content: prev.content ? prev.content + '\n\n' + text : text }));
+                    }
+                  } catch {
+                    alert('클립보드 접근 권한이 필요합니다.');
+                  }
+                }}
+                className="gap-1.5"
+              >
+                클립보드 붙여넣기
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleImproveContent}
                 disabled={isImproving || isLoading || !formData.content}
                 className="gap-2"
