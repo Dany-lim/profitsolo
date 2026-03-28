@@ -124,13 +124,13 @@ export function IdeasContent({ ideas }: IdeasContentProps) {
       </section>
 
       {/* Ideas Grid */}
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         {filteredIdeas.length === 0 ? (
           <p className="text-center text-slate-500">
             {searchQuery ? '검색 결과가 없습니다.' : '아직 게시된 아이디어가 없습니다.'}
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {filteredIdeas.map((idea, index) => (
               <Link key={idea.id} href={`/ideas/${idea.id}`}>
                 <article
