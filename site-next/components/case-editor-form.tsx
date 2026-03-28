@@ -272,6 +272,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             body: JSON.stringify({
               content: improvedContent,
               title: formData.title,
+              category,
             }),
           });
           const revalidateData = await revalidateRes.json();
@@ -363,6 +364,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             body: JSON.stringify({
               content: improvedContent,
               title: formData.title,
+              category,
             }),
           });
           const revalidateData = await revalidateRes.json();
@@ -449,6 +451,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
         body: JSON.stringify({
           content: formData.content,
           title: formData.title,
+          category,
         }),
       });
 

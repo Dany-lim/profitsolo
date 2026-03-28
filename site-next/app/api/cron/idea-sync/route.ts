@@ -244,7 +244,7 @@ ${JSON.stringify(APPROVED_TAGS)}
     const validateRes = await fetch(`${baseUrl}/api/validate-content`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, title: postTitle }),
+      body: JSON.stringify({ content, title: postTitle, category: 'idea' }),
     });
     const validateData = await validateRes.json();
 
