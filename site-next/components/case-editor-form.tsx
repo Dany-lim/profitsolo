@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -52,6 +52,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [customInstruction, setCustomInstruction] = useState('');
   const [editorMode, setEditorMode] = useState<'editor' | 'text'>('editor');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [lastValidatedContent, setLastValidatedContent] = useState<string>('');
   const [category, setCategory] = useState<'case-study' | 'idea'>(study.category || 'case-study');
   const isIdea = category === 'idea';
@@ -193,6 +194,30 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
 
   const handlePaste = createPasteHandler('thumbnailImage');
   const handleProductImagePaste = createPasteHandler('productPreviewImage');
+
+  const handleClipboardPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      if (editorMode === 'text' && textareaRef.current) {
+        const ta = textareaRef.current;
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const before = formData.content.substring(0, start);
+        const after = formData.content.substring(end);
+        const newContent = before + text + after;
+        setFormData({ ...formData, content: newContent });
+        requestAnimationFrame(() => {
+          ta.focus();
+          ta.selectionStart = ta.selectionEnd = start + text.length;
+        });
+      } else {
+        setFormData({ ...formData, content: formData.content + '\n' + text });
+      }
+    } catch {
+      alert('클립보드 접근 권한이 필요합니다. 브라우저 설정에서 허용해주세요.');
+    }
+  };
 
   const handleImproveContent = async () => {
     if (!formData.content || formData.content.trim().length === 0) {
@@ -743,6 +768,15 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
                 type="button"
                 variant="outline"
                 size="sm"
+                onClick={handleClipboardPaste}
+                className="gap-1.5"
+              >
+                붙여넣기
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleImproveContent}
                 disabled={isImproving || isLoading || !formData.content}
                 className="gap-2"
@@ -977,6 +1011,7 @@ export function CaseEditorForm({ study, isNew = false }: CaseEditorFormProps) {
             </div>
           ) : (
             <textarea
+              ref={textareaRef}
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               className="w-full rounded-lg border-2 border-slate-200 bg-white p-4 font-mono text-sm leading-relaxed text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
